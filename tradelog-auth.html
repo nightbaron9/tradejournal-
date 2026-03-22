@@ -553,7 +553,7 @@ function submitSignin() {
     // Demo: treat "demo@tradelog.io" / "Demo1234!pass" as valid
     if (email === 'demo@tradelog.io' && password === 'Demo1234!pass') {
       // In production: server sets httpOnly session cookie, redirects to app
-      window.location.href = 'trading-journal-dashboard.html';
+      launchApp();
     } else {
       recordFailedAttempt();
       if (checkRateLimit()) {
@@ -686,8 +686,44 @@ function submitNewPassword() {
   // Server: validate token not expired, hash pw with argon2id, invalidate ALL sessions, redirect
   setTimeout(() => {
     btn.classList.remove('loading'); btn.textContent = 'Set new password'; btn.disabled = false;
-    window.location.href = 'trading-journal-dashboard.html';
+      launchApp();
   }, 900);
+}
+
+// ── LAUNCH APP ───────────────────────────────────────────────────────────────
+function launchApp() {
+  // In production this would be handled by the server setting a session cookie
+  // and redirecting. In this demo we show a success screen and link to the dashboard.
+  document.querySelector('.auth-card').innerHTML = `
+    <div style="text-align:center;padding:12px 0 8px">
+      <div style="width:52px;height:52px;border-radius:50%;background:var(--green-bg);
+                  display:flex;align-items:center;justify-content:center;margin:0 auto 16px;border:1px solid #bbf7d0">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M5 12l5 5L19 7" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div style="font-family:'Inter Tight',sans-serif;font-size:20px;font-weight:700;
+                  letter-spacing:-0.03em;margin-bottom:6px">Signed in!</div>
+      <div style="font-size:13px;color:var(--text3);margin-bottom:24px">
+        Welcome back, Brian. Your session is active.
+      </div>
+      <a href="trading-journal-dashboard.html"
+         style="display:inline-flex;align-items:center;gap:8px;font-family:inherit;
+                font-size:14px;font-weight:600;color:#fff;background:var(--blue);
+                border-radius:8px;padding:11px 28px;text-decoration:none;
+                transition:background .15s"
+         onmouseover="this.style.background='#1d4ed8'"
+         onmouseout="this.style.background='var(--blue)'">
+        Open TradeLog
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <div style="margin-top:16px;font-size:11px;color:var(--text3)">
+        Or open the dashboard file directly in your browser.
+      </div>
+    </div>
+  `;
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
