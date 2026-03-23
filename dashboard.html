@@ -924,11 +924,11 @@ tbody td {
     </div>
     <nav class="sidebar-nav">
       <div class="nav-sec">Main</div>
-      <div class="nav-item" data-screen="dashboard" data-label="Dashboard" onclick="navigate('dashboard')">
+      <div class="nav-item active" data-screen="dashboard" data-label="Dashboard" onclick="navigate('dashboard')">
         <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="5" height="5" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="9.5" y="1.5" width="5" height="5" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="1.5" y="9.5" width="5" height="5" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="9.5" y="9.5" width="5" height="5" rx="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
         <span class="nav-label">Dashboard</span>
       </div>
-      <div class="nav-item active" data-screen="tradelog" data-label="Trade Log" onclick="navigate('tradelog')">
+      <div class="nav-item" data-screen="tradelog" data-label="Trade Log" onclick="navigate('tradelog')">
         <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M5 6h6M5 9h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
         <span class="nav-label">Trade Log</span>
       </div>
@@ -966,7 +966,7 @@ tbody td {
   <!-- MAIN -->
   <div class="main">
     <div class="topbar">
-      <div class="topbar-title" id="topbar-title">Trade Log</div>
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
       <div class="broker-chip"><span class="chip-dot"></span>IBKR connected</div>
       <div class="topbar-right">
         <div class="topbar-period">
@@ -980,7 +980,7 @@ tbody td {
     <div class="content-area">
 
       <!-- DASHBOARD -->
-      <div class="screen" id="screen-dashboard">
+      <div class="screen active" id="screen-dashboard">
         <div class="content">
           <div class="widgets-row" id="widgets-row"></div>
           <div class="cal-card">
@@ -1016,7 +1016,7 @@ tbody td {
       </div>
 
       <!-- TRADE LOG -->
-      <div class="screen active" id="screen-tradelog">
+      <div class="screen" id="screen-tradelog">
         <div class="content">
 
           <!-- Toolbar -->
