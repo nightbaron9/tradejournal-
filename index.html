@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TradeLog — Sign in</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --text: #111827; --text2: #4b5563; --text3: #9ca3af;
+    --border: #e5e7eb; --border2: #d1d5db;
+    --surface: #f9fafb; --white: #ffffff;
+    --blue: #2563eb; --blue-bg: #eff6ff; --blue-dark: #1d4ed8;
+    --green: #16a34a; --green-bg: #f0fdf4;
+    --red: #dc2626; --red-bg: #fef2f2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-lg: 0 10px 30px rgba(0,0,0,0.10), 0 4px 10px rgba(0,0,0,0.06);
+    --radius: 8px; --radius-lg: 12px;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+    font-size: 14px; color: var(--text);
+    background: var(--surface);
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+
+  .auth-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    width: 100%; max-width: 400px;
+    padding: 36px 36px 32px;
+  }
+
+  /* Logo */
+  .auth-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+  .auth-logo-mark {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--text); display: flex; align-items: center; justify-content: center;
+  }
+  .auth-logo-text { font-family: "Inter Tight", system-ui, sans-serif; font-size: 18px; font-weight: 700; letter-spacing: -0.03em; }
+
+  /* Headings */
+  .auth-heading { font-family: "Inter Tight", system-ui, sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 6px; }
+  .auth-sub { font-size: 13px; color: var(--text3); margin-bottom: 24px; }
+
+  /* Form */
+  .auth-field { margin-bottom: 16px; }
+  .auth-label { display: block; font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 6px; }
+  .auth-input-wrap { position: relative; }
+  .auth-input {
+    width: 100%; font-family: inherit; font-size: 14px;
+    color: var(--text); background: var(--white);
+    border: 1.5px solid var(--border2); border-radius: var(--radius);
+    padding: 10px 12px; outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .auth-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.10); }
+  .auth-input.error { border-color: var(--red); }
+  .auth-input.success { border-color: var(--green); }
+  .auth-input-icon {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    color: var(--text3); cursor: pointer; user-select: none;
+    display: flex; align-items: center;
+  }
+  .auth-input-icon:hover { color: var(--text2); }
+
+  /* Password strength */
+  .pw-strength { margin-top: 8px; }
+  .pw-strength-bars { display: flex; gap: 4px; margin-bottom: 4px; }
+  .pw-bar { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background .2s; }
+  .pw-bar.weak { background: var(--red); }
+  .pw-bar.fair { background: #f59e0b; }
+  .pw-bar.strong { background: var(--green); }
+  .pw-strength-label { font-size: 11px; color: var(--text3); }
+
+  /* Field error */
+  .field-error { font-size: 11px; color: var(--red); margin-top: 5px; display: none; }
+  .field-error.visible { display: block; }
+
+  /* Checkbox */
+  .auth-checkbox-row { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+  .auth-checkbox-row input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--blue); }
+  .auth-checkbox-row label { font-size: 12px; color: var(--text2); cursor: pointer; }
+  .auth-checkbox-row a { color: var(--blue); text-decoration: none; }
+  .auth-checkbox-row a:hover { text-decoration: underline; }
+
+  /* Submit button */
+  .auth-btn {
+    width: 100%; font-family: inherit; font-size: 14px; font-weight: 600;
+    color: #fff; background: var(--blue);
+    border: none; border-radius: var(--radius);
+    padding: 11px 20px; cursor: pointer;
+    transition: background .15s, opacity .15s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-bottom: 16px;
+  }
+  .auth-btn:hover { background: var(--blue-dark); }
+  .auth-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+  .auth-btn.loading::after {
+    content: '';
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Alert banners */
+  .auth-alert {
+    display: none; padding: 10px 14px; border-radius: var(--radius);
+    font-size: 12px; margin-bottom: 16px; line-height: 1.5;
+  }
+  .auth-alert.visible { display: flex; align-items: flex-start; gap: 8px; }
+  .auth-alert.error { background: var(--red-bg); color: var(--red); border: 1px solid #fecaca; }
+  .auth-alert.success { background: var(--green-bg); color: var(--green); border: 1px solid #bbf7d0; }
+  .auth-alert.info { background: var(--blue-bg); color: var(--blue); border: 1px solid #bfdbfe; }
+
+  /* Divider */
+  .auth-divider { display: flex; align-items: center; gap: 10px; margin: 18px 0; }
+  .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .auth-divider span { font-size: 11px; color: var(--text3); white-space: nowrap; }
+
+  /* Links */
+  .auth-footer { text-align: center; font-size: 12px; color: var(--text3); margin-top: 4px; }
+  .auth-footer a { color: var(--blue); text-decoration: none; font-weight: 500; }
+  .auth-footer a:hover { text-decoration: underline; }
+  .auth-forgot { display: block; text-align: right; font-size: 12px; color: var(--blue); text-decoration: none; margin-top: 5px; }
+  .auth-forgot:hover { text-decoration: underline; }
+
+  /* Rate limit countdown */
+  .rate-limit-msg { font-size: 12px; color: var(--red); text-align: center; margin-bottom: 12px; display: none; }
+  .rate-limit-msg.visible { display: block; }
+
+  /* Tabs */
+  .auth-tabs { display: flex; background: var(--surface); border-radius: var(--radius); padding: 3px; margin-bottom: 24px; }
+  .auth-tab {
+    flex: 1; text-align: center; font-size: 13px; font-weight: 500;
+    padding: 7px; border-radius: 6px; cursor: pointer;
+    color: var(--text3); transition: all .15s;
+  }
+  .auth-tab.active { background: var(--white); color: var(--text); box-shadow: var(--shadow); }
+
+  /* Verification screen */
+  .auth-verify-icon {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: var(--blue-bg); display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px; color: var(--blue);
+  }
+
+  /* Hidden panels */
+  .auth-panel { display: none; }
+  .auth-panel.active { display: block; }
+</style>
+</head>
+<body>
+
+<div class="auth-card">
+  <!-- Logo -->
+  <div class="auth-logo">
+    <div class="auth-logo-mark">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M2 11L6 7L9 9.5L13.5 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span class="auth-logo-text">TradeLog</span>
+  </div>
+
+  <!-- Tabs: Sign in / Sign up -->
+  <div class="auth-tabs" id="auth-tabs">
+    <div class="auth-tab active" onclick="switchTab('signin')">Sign in</div>
+    <div class="auth-tab" onclick="switchTab('signup')">Create account</div>
+  </div>
+
+  <!-- ── SIGN IN ── -->
+  <div class="auth-panel active" id="panel-signin">
+    <div class="auth-heading">Welcome back</div>
+    <div class="auth-sub">Sign in to your TradeLog account</div>
+
+    <div class="auth-alert error" id="signin-error">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M7 4v3.5M7 9.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span id="signin-error-msg">Invalid email or password.</span>
+    </div>
+
+    <div class="rate-limit-msg" id="rate-limit-msg">
+      Too many attempts. Try again in <strong id="rate-limit-countdown">30</strong>s.
+    </div>
+
+    <div class="auth-field">
+      <label class="auth-label" for="signin-email">Email address</label>
+      <input class="auth-input" type="email" id="signin-email" placeholder="you@example.com" autocomplete="email" oninput="clearSigninError()">
+      <div class="field-error" id="signin-email-err">Please enter a valid email.</div>
+    </div>
+
+    <div class="auth-field">
+      <label class="auth-label" for="signin-password">Password</label>
+      <div class="auth-input-wrap">
+        <input class="auth-input" type="password" id="signin-password" placeholder="••••••••" autocomplete="current-password" oninput="clearSigninError()" onkeydown="if(event.key==='Enter')submitSignin()">
+        <span class="auth-input-icon" onclick="togglePw('signin-password', this)">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" id="signin-pw-icon"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/></svg>
+        </span>
+      </div>
+      <a class="auth-forgot" href="#" onclick="switchTab('reset');return false">Forgot password?</a>
+    </div>
+
+    <div class="auth-checkbox-row">
+      <input type="checkbox" id="signin-remember" checked>
+      <label for="signin-remember">Keep me signed in for 30 days</label>
+    </div>
+
+    <button class="auth-btn" id="signin-btn" onclick="submitSignin()">Sign in</button>
+
+    <div class="auth-footer">
+      Don't have an account? <a href="#" onclick="switchTab('signup');return false">Create one</a>
+    </div>
+  </div>
+
+  <!-- ── SIGN UP ── -->
+  <div class="auth-panel" id="panel-signup">
+    <div class="auth-heading">Create account</div>
+    <div class="auth-sub">Start your free 14-day trial. No credit card required.</div>
+
+    <div class="auth-alert error" id="signup-error">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M7 4v3.5M7 9.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span id="signup-error-msg">Something went wrong.</span>
+    </div>
+
+    <div class="auth-field">
+      <label class="auth-label" for="signup-name">Full name</label>
+      <input class="auth-input" type="text" id="signup-name" placeholder="Brian Lin" autocomplete="name" oninput="validateSignupName()">
+      <div class="field-error" id="signup-name-err">Please enter your name.</div>
+    </div>
+
+    <div class="auth-field">
+      <label class="auth-label" for="signup-email">Email address</label>
+      <input class="auth-input" type="email" id="signup-email" placeholder="you@example.com" autocomplete="email" oninput="validateSignupEmail()">
+      <div class="field-error" id="signup-email-err">Please enter a valid email.</div>
+    </div>
+
+    <div class="auth-field">
+      <label class="auth-label" for="signup-password">Password</label>
+      <div class="auth-input-wrap">
+        <input class="auth-input" type="password" id="signup-password" placeholder="••••••••" autocomplete="new-password"
+               oninput="validateSignupPassword()" style="padding-right:40px">
+        <span class="auth-input-icon" onclick="togglePw('signup-password', this)">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/></svg>
+        </span>
+      </div>
+      <div class="pw-strength" id="pw-strength" style="display:none">
+        <div class="pw-strength-bars">
+          <div class="pw-bar" id="pw-bar-1"></div>
+          <div class="pw-bar" id="pw-bar-2"></div>
+          <div class="pw-bar" id="pw-bar-3"></div>
+          <div class="pw-bar" id="pw-bar-4"></div>
+        </div>
+        <div class="pw-strength-label" id="pw-strength-label"></div>
+      </div>
+      <div class="field-error" id="signup-password-err">Password must be at least 12 characters.</div>
+    </div>
+
+    <div class="auth-field">
+      <label class="auth-label" for="signup-confirm">Confirm password</label>
+      <input class="auth-input" type="password" id="signup-confirm" placeholder="••••••••" autocomplete="new-password" oninput="validateSignupConfirm()">
+      <div class="field-error" id="signup-confirm-err">Passwords do not match.</div>
+    </div>
+
+    <div class="auth-checkbox-row">
+      <input type="checkbox" id="signup-terms">
+      <label for="signup-terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+    </div>
+
+    <button class="auth-btn" id="signup-btn" onclick="submitSignup()">Create account</button>
+
+    <div class="auth-footer">
+      Already have an account? <a href="#" onclick="switchTab('signin');return false">Sign in</a>
+    </div>
+  </div>
+
+  <!-- ── EMAIL VERIFICATION ── -->
+  <div class="auth-panel" id="panel-verify">
+    <div style="text-align:center;padding:8px 0 20px">
+      <div class="auth-verify-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 8l9 6 9-6M3 8v10a1 1 0 001 1h16a1 1 0 001-1V8M3 8a1 1 0 011-1h16a1 1 0 011 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="auth-heading" style="margin-bottom:8px">Check your inbox</div>
+      <div class="auth-sub" style="margin-bottom:0">We sent a verification link to<br><strong id="verify-email-display" style="color:var(--text)"></strong></div>
+    </div>
+    <div class="auth-alert info visible" style="margin-bottom:20px">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M7 6.5v4M7 4.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      The link expires in 24 hours. Check your spam folder if you don't see it.
+    </div>
+    <button class="auth-btn" style="background:var(--surface);color:var(--text);border:1.5px solid var(--border2)" id="resend-btn" onclick="resendVerification()">Resend verification email</button>
+    <div class="auth-footer" style="margin-top:12px"><a href="#" onclick="switchTab('signin');return false">← Back to sign in</a></div>
+  </div>
+
+  <!-- ── PASSWORD RESET REQUEST ── -->
+  <div class="auth-panel" id="panel-reset">
+    <div class="auth-heading">Reset password</div>
+    <div class="auth-sub">Enter your email and we'll send a reset link. The link expires in 15 minutes.</div>
+
+    <div class="auth-alert success" id="reset-success">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="flex-shrink:0;margin-top:1px"><path d="M2 7l4 4 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Reset link sent. Check your inbox — the link expires in 15 minutes.
+    </div>
+
+    <div class="auth-field">
+      <label class="auth-label" for="reset-email">Email address</label>
+      <input class="auth-input" type="email" id="reset-email" placeholder="you@example.com" autocomplete="email" onkeydown="if(event.key==='Enter')submitReset()">
+    </div>
+
+    <button class="auth-btn" id="reset-btn" onclick="submitReset()">Send reset link</button>
+    <div class="auth-footer" style="margin-top:4px"><a href="#" onclick="switchTab('signin');return false">← Back to sign in</a></div>
+  </div>
+
+  <!-- ── NEW PASSWORD (after clicking reset link) ── -->
+  <div class="auth-panel" id="panel-newpw">
+    <div class="auth-heading">Set new password</div>
+    <div class="auth-sub">Choose a strong password. You'll be signed in automatically after.</div>
+
+    <div class="auth-alert error" id="newpw-error" style="display:none">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M7 4v3.5M7 9.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span id="newpw-error-msg">This reset link has expired. Please request a new one.</span>
+    </div>
+
+    <div class="auth-field">
+      <label class="auth-label" for="newpw-password">New password</label>
+      <div class="auth-input-wrap">
+        <input class="auth-input" type="password" id="newpw-password" placeholder="••••••••" autocomplete="new-password" oninput="validateNewPw()" style="padding-right:40px">
+        <span class="auth-input-icon" onclick="togglePw('newpw-password', this)">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/></svg>
+        </span>
+      </div>
+      <div class="pw-strength" id="newpw-strength" style="display:none">
+        <div class="pw-strength-bars">
+          <div class="pw-bar" id="npw-bar-1"></div>
+          <div class="pw-bar" id="npw-bar-2"></div>
+          <div class="pw-bar" id="npw-bar-3"></div>
+          <div class="pw-bar" id="npw-bar-4"></div>
+        </div>
+        <div class="pw-strength-label" id="newpw-strength-label"></div>
+      </div>
+      <div class="field-error" id="newpw-password-err">Password must be at least 12 characters.</div>
+    </div>
+    <div class="auth-field">
+      <label class="auth-label" for="newpw-confirm">Confirm new password</label>
+      <input class="auth-input" type="password" id="newpw-confirm" placeholder="••••••••" autocomplete="new-password" oninput="validateNewPwConfirm()">
+      <div class="field-error" id="newpw-confirm-err">Passwords do not match.</div>
+    </div>
+
+    <button class="auth-btn" id="newpw-btn" onclick="submitNewPassword()">Set new password</button>
+  </div>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// SECURITY NOTE — FOR BACKEND ENGINEERS
+// ─────────────────────────────────────────────────────────────────────────────
+// This file is the UI layer only. Zero secrets, tokens, or auth logic live here.
+// ALL of the following MUST be implemented server-side:
+//
+//   Passwords:
+//   - Hash with argon2id (preferred) or bcrypt (cost >= 12). Never store plaintext.
+//   - Never log or expose passwords in API responses.
+//
+//   Sessions:
+//   - Issue a signed JWT (RS256) or opaque session token from the server.
+//   - Set as httpOnly, Secure, SameSite=Strict cookie — NEVER in localStorage.
+//   - "Remember me" = 30-day expiry; default = 24-hour expiry.
+//   - On logout: invalidate server-side (token blocklist or session DB delete).
+//
+//   Rate limiting (server middleware, e.g. express-rate-limit):
+//   - Sign-in: 5 attempts per 15 min per IP+email combo → 429 + lockout.
+//   - Password reset: 3 requests per hour per email.
+//   - Signup: 10 per hour per IP.
+//
+//   Email verification:
+//   - Generate cryptographically random 32-byte token (crypto.randomBytes).
+//   - Store hashed token + expiry (24h) in DB. Send raw token in email link.
+//   - On verify: hash incoming token, compare to DB, check expiry, mark verified.
+//   - Do NOT allow login until email is verified.
+//
+//   Password reset:
+//   - Same token pattern as email verification but expiry = 15 minutes.
+//   - Invalidate token after first use.
+//   - Invalidate ALL existing sessions on password change.
+//
+//   Secrets (environment variables only — never in frontend):
+//   - JWT_SECRET / RSA private key
+//   - EMAIL_API_KEY (SendGrid, Postmark, etc.)
+//   - DATABASE_URL
+//   - SESSION_SECRET
+//
+//   Additional hardening:
+//   - CSRF protection (double-submit cookie or synchronizer token).
+//   - HTTPS everywhere — redirect HTTP → HTTPS.
+//   - Helmet.js (or equivalent) for security headers.
+//   - Content-Security-Policy header.
+//   - Log auth events (login, logout, failed attempt, reset) with IP + timestamp.
+//   - Never reveal whether an email exists (generic "if that email is registered..." message).
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── TAB SWITCHING ─────────────────────────────────────────────────────────────
+const PANELS = ['signin','signup','verify','reset','newpw'];
+
+function switchTab(tab) {
+  PANELS.forEach(p => {
+    document.getElementById('panel-'+p)?.classList.remove('active');
+  });
+  document.getElementById('panel-'+tab)?.classList.add('active');
+
+  // Show/hide the top tab switcher only for signin/signup
+  const tabs = document.getElementById('auth-tabs');
+  tabs.style.display = (tab === 'signin' || tab === 'signup') ? 'flex' : 'none';
+
+  // Update active tab highlight
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  if (tab === 'signin') document.querySelectorAll('.auth-tab')[0].classList.add('active');
+  if (tab === 'signup') document.querySelectorAll('.auth-tab')[1].classList.add('active');
+}
+
+// ── PASSWORD VISIBILITY TOGGLE ────────────────────────────────────────────────
+function togglePw(inputId, iconEl) {
+  const input = document.getElementById(inputId);
+  const isHidden = input.type === 'password';
+  input.type = isHidden ? 'text' : 'password';
+  iconEl.innerHTML = isHidden
+    ? `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 2l12 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M6.5 6.6A2 2 0 019.4 9.5M4.2 4.3C2.8 5.3 1.8 6.7 1 8c1.5 3 4.2 5 7 5 1.3 0 2.5-.4 3.6-1M7 3.1C7.3 3 7.7 3 8 3c2.8 0 5.5 2 7 5-.5 1-1.2 2-2 2.7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>`
+    : `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/></svg>`;
+}
+
+// ── PASSWORD STRENGTH ─────────────────────────────────────────────────────────
+function scorePassword(pw) {
+  let score = 0;
+  if (pw.length >= 12) score++;
+  if (pw.length >= 16) score++;
+  if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  // Common patterns penalty
+  if (/^(.)+$/.test(pw) || /^(123|abc|qwerty)/i.test(pw)) score = Math.max(0, score - 2);
+  return Math.min(4, score);
+}
+
+function renderStrength(score, barPrefix, labelId, strengthId) {
+  const el = document.getElementById(strengthId);
+  if (!el) return;
+  el.style.display = 'block';
+  const labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+  const classes = ['', 'weak', 'fair', 'strong', 'strong'];
+  document.getElementById(labelId).textContent = labels[score] || '';
+  document.getElementById(labelId).style.color = score <= 1 ? 'var(--red)' : score === 2 ? '#f59e0b' : 'var(--green)';
+  for (let i = 1; i <= 4; i++) {
+    const bar = document.getElementById(barPrefix + i);
+    bar.className = 'pw-bar' + (i <= score ? ' ' + classes[score] : '');
+  }
+}
+
+// ── RATE LIMITING (UI layer — real enforcement is server-side) ────────────────
+const rateLimitState = { attempts: 0, lockedUntil: null };
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_SECONDS = 30;
+let rateLimitTimer = null;
+
+function checkRateLimit() {
+  if (rateLimitState.lockedUntil && Date.now() < rateLimitState.lockedUntil) {
+    const remaining = Math.ceil((rateLimitState.lockedUntil - Date.now()) / 1000);
+    showRateLimit(remaining);
+    return false;
+  }
+  return true;
+}
+
+function recordFailedAttempt() {
+  rateLimitState.attempts++;
+  if (rateLimitState.attempts >= MAX_ATTEMPTS) {
+    rateLimitState.lockedUntil = Date.now() + LOCKOUT_SECONDS * 1000;
+    rateLimitState.attempts = 0;
+    showRateLimit(LOCKOUT_SECONDS);
+  }
+}
+
+function showRateLimit(seconds) {
+  const msg = document.getElementById('rate-limit-msg');
+  const btn = document.getElementById('signin-btn');
+  msg.classList.add('visible');
+  btn.disabled = true;
+  document.getElementById('signin-error')?.classList.remove('visible');
+
+  let remaining = seconds;
+  document.getElementById('rate-limit-countdown').textContent = remaining;
+
+  clearInterval(rateLimitTimer);
+  rateLimitTimer = setInterval(() => {
+    remaining--;
+    const el = document.getElementById('rate-limit-countdown');
+    if (el) el.textContent = remaining;
+    if (remaining <= 0) {
+      clearInterval(rateLimitTimer);
+      msg.classList.remove('visible');
+      btn.disabled = false;
+      rateLimitState.lockedUntil = null;
+    }
+  }, 1000);
+}
+
+// ── VALIDATION HELPERS ────────────────────────────────────────────────────────
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
+}
+
+function setFieldError(inputId, errId, show) {
+  const input = document.getElementById(inputId);
+  const err = document.getElementById(errId);
+  if (!input || !err) return;
+  input.classList.toggle('error', show);
+  err.classList.toggle('visible', show);
+}
+
+function clearSigninError() {
+  document.getElementById('signin-error')?.classList.remove('visible');
+  ['signin-email','signin-password'].forEach(id => {
+    document.getElementById(id)?.classList.remove('error');
+  });
+}
+
+// ── SIGN IN VALIDATION + SUBMIT ───────────────────────────────────────────────
+function submitSignin() {
+  if (!checkRateLimit()) return;
+
+  const email = document.getElementById('signin-email').value.trim();
+  const password = document.getElementById('signin-password').value;
+
+  let valid = true;
+  if (!isValidEmail(email)) { setFieldError('signin-email', 'signin-email-err', true); valid = false; }
+  if (password.length < 1)  { setFieldError('signin-password', null, true); valid = false; }
+  if (!valid) return;
+
+  const btn = document.getElementById('signin-btn');
+  btn.classList.add('loading');
+  btn.textContent = '';
+  btn.disabled = true;
+
+  // Simulate API call — replace with real fetch('/api/auth/signin', {...})
+  setTimeout(() => {
+    btn.classList.remove('loading');
+    btn.textContent = 'Sign in';
+    btn.disabled = false;
+
+    // Demo: treat "demo@tradelog.io" / "Demo1234!pass" as valid
+    if (email === 'demo@tradelog.io' && password === 'Demo1234!pass') {
+      // In production: server sets httpOnly session cookie, redirects to app
+      window.location.replace('https://nightbaron9.github.io/tradejournal-/dashboard.html');
+    } else {
+      recordFailedAttempt();
+      if (checkRateLimit()) {
+        // Security: same message for wrong email OR wrong password (no enumeration)
+        const errEl = document.getElementById('signin-error');
+        document.getElementById('signin-error-msg').textContent = 'Invalid email or password.';
+        errEl.classList.add('visible');
+        document.getElementById('signin-email').classList.add('error');
+        document.getElementById('signin-password').classList.add('error');
+        document.getElementById('signin-password').value = ''; // clear pw field on failure
+        document.getElementById('signin-password').focus();
+      }
+    }
+  }, 900);
+}
+
+// ── SIGN UP VALIDATION ────────────────────────────────────────────────────────
+function validateSignupName() {
+  const v = document.getElementById('signup-name').value.trim();
+  setFieldError('signup-name', 'signup-name-err', v.length < 1);
+}
+function validateSignupEmail() {
+  const v = document.getElementById('signup-email').value.trim();
+  setFieldError('signup-email', 'signup-email-err', !isValidEmail(v));
+}
+function validateSignupPassword() {
+  const pw = document.getElementById('signup-password').value;
+  const score = scorePassword(pw);
+  renderStrength(score, 'pw-bar-', 'pw-strength-label', 'pw-strength');
+  setFieldError('signup-password', 'signup-password-err', pw.length > 0 && pw.length < 12);
+}
+function validateSignupConfirm() {
+  const pw = document.getElementById('signup-password').value;
+  const cf = document.getElementById('signup-confirm').value;
+  setFieldError('signup-confirm', 'signup-confirm-err', cf.length > 0 && cf !== pw);
+}
+
+function submitSignup() {
+  const name    = document.getElementById('signup-name').value.trim();
+  const email   = document.getElementById('signup-email').value.trim();
+  const pw      = document.getElementById('signup-password').value;
+  const confirm = document.getElementById('signup-confirm').value;
+  const terms   = document.getElementById('signup-terms').checked;
+
+  let valid = true;
+  if (!name)            { setFieldError('signup-name',     'signup-name-err',     true); valid = false; }
+  if (!isValidEmail(email)) { setFieldError('signup-email', 'signup-email-err', true); valid = false; }
+  if (pw.length < 12)   { setFieldError('signup-password', 'signup-password-err', true); valid = false; }
+  if (pw !== confirm)   { setFieldError('signup-confirm',  'signup-confirm-err',  true); valid = false; }
+  if (!terms) {
+    document.getElementById('signup-error-msg').textContent = 'Please accept the Terms of Service to continue.';
+    document.getElementById('signup-error').classList.add('visible');
+    valid = false;
+  }
+  if (!valid) return;
+
+  const btn = document.getElementById('signup-btn');
+  btn.classList.add('loading'); btn.textContent = ''; btn.disabled = true;
+
+  // Simulate API — replace with fetch('/api/auth/signup', {...})
+  setTimeout(() => {
+    btn.classList.remove('loading'); btn.textContent = 'Create account'; btn.disabled = false;
+    // Server creates account, sends verification email, returns 201
+    document.getElementById('verify-email-display').textContent = email;
+    switchTab('verify');
+  }, 1000);
+}
+
+// ── EMAIL VERIFICATION ────────────────────────────────────────────────────────
+let resendCooldown = false;
+function resendVerification() {
+  if (resendCooldown) return;
+  resendCooldown = true;
+  const btn = document.getElementById('resend-btn');
+  btn.textContent = 'Email sent!';
+  btn.style.color = 'var(--green)';
+  btn.style.borderColor = 'var(--green)';
+  // In production: POST /api/auth/resend-verification
+  setTimeout(() => {
+    resendCooldown = false;
+    btn.textContent = 'Resend verification email';
+    btn.style.color = '';
+    btn.style.borderColor = '';
+  }, 60000); // 60s cooldown to prevent spam
+}
+
+// ── PASSWORD RESET ────────────────────────────────────────────────────────────
+function submitReset() {
+  const email = document.getElementById('reset-email').value.trim();
+  if (!isValidEmail(email)) {
+    setFieldError('reset-email', null, true);
+    document.getElementById('reset-email').classList.add('error');
+    return;
+  }
+
+  const btn = document.getElementById('reset-btn');
+  btn.classList.add('loading'); btn.textContent = ''; btn.disabled = true;
+
+  // Simulate API — replace with fetch('/api/auth/reset-password', {...})
+  setTimeout(() => {
+    btn.classList.remove('loading'); btn.textContent = 'Send reset link'; btn.disabled = false;
+    // Security: show success regardless of whether email exists (prevents enumeration)
+    document.getElementById('reset-success').classList.add('visible');
+    document.getElementById('reset-email').disabled = true;
+    btn.disabled = true;
+  }, 800);
+}
+
+// ── NEW PASSWORD (after reset link) ──────────────────────────────────────────
+function validateNewPw() {
+  const pw = document.getElementById('newpw-password').value;
+  renderStrength(scorePassword(pw), 'npw-bar-', 'newpw-strength-label', 'newpw-strength');
+  setFieldError('newpw-password', 'newpw-password-err', pw.length > 0 && pw.length < 12);
+}
+function validateNewPwConfirm() {
+  const pw = document.getElementById('newpw-password').value;
+  const cf = document.getElementById('newpw-confirm').value;
+  setFieldError('newpw-confirm', 'newpw-confirm-err', cf.length > 0 && cf !== pw);
+}
+function submitNewPassword() {
+  const pw = document.getElementById('newpw-password').value;
+  const cf = document.getElementById('newpw-confirm').value;
+  if (pw.length < 12) { setFieldError('newpw-password', 'newpw-password-err', true); return; }
+  if (pw !== cf)      { setFieldError('newpw-confirm',  'newpw-confirm-err',  true); return; }
+
+  const btn = document.getElementById('newpw-btn');
+  btn.classList.add('loading'); btn.textContent = ''; btn.disabled = true;
+
+  // Replace with: fetch('/api/auth/reset-password/confirm', { token: urlToken, password: pw })
+  // Server: validate token not expired, hash pw with argon2id, invalidate ALL sessions, redirect
+  setTimeout(() => {
+    btn.classList.remove('loading'); btn.textContent = 'Set new password'; btn.disabled = false;
+      window.location.replace('https://nightbaron9.github.io/tradejournal-/dashboard.html');
+  }, 900);
+}
+
+// ── LAUNCH APP ───────────────────────────────────────────────────────────────
+function launchApp() {
+  // In production this would be handled by the server setting a session cookie
+  // and redirecting. In this demo we show a success screen and link to the dashboard.
+  document.querySelector('.auth-card').innerHTML = `
+    <div style="text-align:center;padding:12px 0 8px">
+      <div style="width:52px;height:52px;border-radius:50%;background:var(--green-bg);
+                  display:flex;align-items:center;justify-content:center;margin:0 auto 16px;border:1px solid #bbf7d0">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M5 12l5 5L19 7" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div style="font-family:'Inter Tight',sans-serif;font-size:20px;font-weight:700;
+                  letter-spacing:-0.03em;margin-bottom:6px">Signed in!</div>
+      <div style="font-size:13px;color:var(--text3);margin-bottom:24px">
+        Welcome back, Brian. Your session is active.
+      </div>
+      <a href="https://nightbaron9.github.io/tradejournal-/dashboard.html" target="_self"
+         style="display:inline-flex;align-items:center;gap:8px;font-family:inherit;
+                font-size:14px;font-weight:600;color:#fff;background:var(--blue);
+                border-radius:8px;padding:11px 28px;text-decoration:none;
+                transition:background .15s"
+         onmouseover="this.style.background='#1d4ed8'"
+         onmouseout="this.style.background='var(--blue)'">
+        Open TradeLog
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <div style="margin-top:16px;font-size:11px;color:var(--text3)">
+        Or open the dashboard file directly in your browser.
+      </div>
+    </div>
+  `;
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+// In production: check URL for ?mode=reset&token=... or ?mode=verify&token=...
+// and switch to the appropriate panel after validating the token server-side.
+const urlParams = new URLSearchParams(window.location.search);
+const mode = urlParams.get('mode');
+if (mode === 'reset') switchTab('newpw');
+if (mode === 'verify') {
+  // In production: server validates token, marks email verified, redirects to app
+  switchTab('verify');
+}
+</script>
+</body>
+</html>
