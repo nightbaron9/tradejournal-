@@ -905,10 +905,114 @@ tbody td {
 .danger-card .settings-row:last-child { border-bottom: none; }
 .danger-card .settings-row-lbl { color: var(--red); }
 .danger-card .settings-row-sub { color: #f87171; }
+
+/* ── MOBILE RESPONSIVE ── */
+@media (max-width: 768px) {
+  :root {
+    --sidebar-exp: 0px;
+    --sidebar-col: 0px;
+  }
+
+  /* Hide sidebar entirely on mobile, show as overlay when open */
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 260px !important;
+    min-width: 260px !important;
+    transform: translateX(-100%);
+    transition: transform .25s cubic-bezier(0.4,0,0.2,1);
+    z-index: 200;
+    box-shadow: var(--shadow-lg);
+  }
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+  .sidebar.collapsed {
+    width: 260px !important;
+    min-width: 260px !important;
+  }
+  .sidebar.collapsed .logo-text { opacity: 1; width: auto; }
+  .sidebar.collapsed .nav-label { opacity: 1; }
+  .sidebar.collapsed .nav-badge { opacity: 1; }
+  .sidebar.collapsed .nav-item { justify-content: flex-start; padding: 0 8px; }
+  .sidebar.collapsed .nav-sec { opacity: 1; height: auto; padding-top: 6px; }
+  .sidebar.collapsed .sidebar-toggle { opacity: 1; pointer-events: all; width: 26px; margin-left: auto; }
+  .sidebar.collapsed .expand-btn { opacity: 0; pointer-events: none; }
+  .sidebar.collapsed .user-info { opacity: 1; width: auto; }
+  .sidebar.collapsed .user-row { justify-content: flex-start; padding: 6px 8px; }
+
+  /* Mobile overlay backdrop */
+  .mobile-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 199;
+  }
+  .mobile-overlay.visible { display: block; }
+
+  /* Mobile topbar hamburger */
+  .mobile-menu-btn {
+    display: flex !important;
+    align-items: center; justify-content: center;
+    width: 34px; height: 34px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--white);
+    cursor: pointer;
+    color: var(--text2);
+    flex-shrink: 0;
+    margin-right: 8px;
+  }
+
+  .main { width: 100%; }
+
+  /* Calendar — hide weekly summary column, make cells smaller */
+  .dow-row  { grid-template-columns: repeat(7, 1fr) !important; }
+  .week-row { grid-template-columns: repeat(7, 1fr) !important; }
+  .wcol-cell { display: none !important; }
+  .dow-cell.wcol { display: none !important; }
+
+  .cal-cell { min-height: 56px !important; padding: 5px 4px !important; }
+  .day-pl { font-size: 10px !important; }
+  .day-meta { font-size: 9px !important; }
+  .dn { font-size: 11px !important; }
+
+  /* Hide period switcher labels on very small screens */
+  .topbar { padding: 0 10px; gap: 8px; }
+  .broker-chip { display: none; }
+
+  /* Content padding */
+  .content { padding: 14px !important; }
+
+  /* Widgets — 2 per row on mobile */
+  .widgets-row { grid-template-columns: 1fr 1fr !important; }
+
+  /* Positions / analytics grids */
+  .pos-summary { grid-template-columns: 1fr 1fr !important; }
+  .pos-bottom-row { grid-template-columns: 1fr !important; }
+  .an-grid-2 { grid-template-columns: 1fr !important; }
+  .an-grid-3 { grid-template-columns: 1fr !important; }
+  .an-risk-cards { grid-template-columns: 1fr 1fr !important; }
+  .an-summary-bar { grid-template-columns: 1fr 1fr !important; }
+
+  /* Journal layout */
+  .jnl-layout { grid-template-columns: 1fr !important; height: auto !important; }
+  .jnl-sidebar { border-right: none !important; border-bottom: 1px solid var(--border); }
+
+  /* Settings */
+  .settings-page { padding: 16px !important; }
+  .settings-row { flex-direction: column; align-items: flex-start !important; gap: 10px !important; }
+  .settings-input, .settings-select { min-width: 100% !important; width: 100% !important; }
+}
+
+/* Always hide mobile menu btn on desktop */
+.mobile-menu-btn { display: none; }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 <body>
+<div class="mobile-overlay" id="mobile-overlay" onclick="closeMobileSidebar()"></div>
 <div class="layout">
 
   <!-- SIDEBAR -->
@@ -966,6 +1070,9 @@ tbody td {
   <!-- MAIN -->
   <div class="main">
     <div class="topbar">
+      <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
       <div class="topbar-title" id="topbar-title">Dashboard</div>
       <div class="broker-chip"><span class="chip-dot"></span>IBKR connected</div>
       <div class="topbar-right">
@@ -1583,6 +1690,16 @@ tbody td {
 <script>
 // ── SIDEBAR ───────────────────────────────────────────────────────────────────
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); }
+function toggleMobileSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('mobile-overlay');
+  sidebar.classList.toggle('mobile-open');
+  overlay.classList.toggle('visible');
+}
+function closeMobileSidebar() {
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('mobile-overlay').classList.remove('visible');
+}
 
 // ── NAVIGATION ────────────────────────────────────────────────────────────────
 const TITLES = { dashboard:'Dashboard', tradelog:'Trade Log', positions:'Open Positions', analytics:'Analytics', journal:'Notes & Journal', settings:'Settings' };
@@ -1594,10 +1711,11 @@ function navigate(id) {
   document.getElementById('topbar-title').textContent = TITLES[id];
   if (id === 'analytics') setTimeout(renderAnalytics, 50);
   if (id === 'journal') {
-    // Sync journal mini-cal to current dashboard month
     jnlVy = vy; jnlVm = vm;
     setTimeout(renderJournal, 20);
   }
+  // Close mobile sidebar on navigation
+  closeMobileSidebar();
 }
 
 let activePeriod = 'mtd'; // 'mtd' | 'ytd' | 'all'
