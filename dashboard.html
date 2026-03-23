@@ -1946,13 +1946,7 @@ function renderPositions(){
   document.getElementById('pos-notes').innerHTML=positions.map(p=>{const pc=p.unpl>=0?'g':'r';return`<div class="pnote-row"><div class="pnote-header"><span class="pnote-sym">${p.sym}</span><span class="pnote-pl ${pc}">${fmtPos(p.unpl)}</span></div><textarea class="pnote-text" placeholder="Add a note for this position\u2026">${p.note}</textarea></div>`;}).join('');
 }
 
-// ── INIT ─────────────────────────────────────────────────────────────────────
-renderWidgets();
-renderCal();
-selectDay(kk(2026,2,20),20);
-renderTrades();
-renderPositions();
-// analytics + journal render on demand
+
 
 
 // ── ANALYTICS ─────────────────────────────────────────────────────────────────
@@ -2170,6 +2164,7 @@ function renderAnalytics(){
 }
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
+navigate('dashboard');
 renderWidgets();
 renderCal();
 selectDay(kk(2026,2,20),20);
