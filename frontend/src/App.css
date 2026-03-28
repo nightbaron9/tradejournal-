@@ -532,3 +532,252 @@ th {
     grid-template-columns: 1fr;
   }
 }
+
+.calendar-toolbar,
+.detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.calendar-toolbar {
+  margin-bottom: 18px;
+}
+
+.calendar-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.calendar-nav,
+.calendar-today,
+.calendar-cell {
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.calendar-nav,
+.calendar-today {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  padding: 9px 12px;
+  color: #374151;
+}
+
+.calendar-nav:hover,
+.calendar-today:hover {
+  background: #f9fafb;
+}
+
+.calendar-summary-bar,
+.detail-stats,
+.detail-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.calendar-summary-bar {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 18px;
+}
+
+.calendar-summary-bar > div,
+.detail-stats > div {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  display: grid;
+  gap: 6px;
+}
+
+.calendar-summary-bar strong {
+  font-size: 22px;
+}
+
+.calendar-summary-label,
+.calendar-weekdays span,
+.calendar-trade-count {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.calendar-board {
+  display: grid;
+  gap: 12px;
+}
+
+.calendar-weekdays,
+.calendar-month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.calendar-weekdays span {
+  padding: 0 4px;
+}
+
+.calendar-cell {
+  min-height: 118px;
+  padding: 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  display: grid;
+  align-content: space-between;
+  gap: 12px;
+  text-align: left;
+  color: inherit;
+}
+
+.calendar-cell:hover {
+  border-color: #93c5fd;
+}
+
+.calendar-cell.positive {
+  background: #f0fdf4;
+}
+
+.calendar-cell.negative {
+  background: #fef2f2;
+}
+
+.calendar-cell.neutral {
+  background: #eff6ff;
+}
+
+.calendar-cell.empty {
+  background: #f9fafb;
+}
+
+.calendar-cell.other-month {
+  opacity: 0.45;
+}
+
+.calendar-cell.selected {
+  outline: 2px solid #2563eb;
+  outline-offset: -2px;
+}
+
+.calendar-cell-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.calendar-date-pill {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #374151;
+}
+
+.calendar-date-pill.today {
+  background: #111827;
+  color: #ffffff;
+}
+
+.calendar-trade-count {
+  font-weight: 600;
+}
+
+.calendar-cell strong {
+  font-size: 18px;
+}
+
+.calendar-cell small {
+  color: #6b7280;
+}
+
+.detail-card-wide {
+  display: grid;
+  gap: 18px;
+}
+
+.detail-header {
+  align-items: center;
+}
+
+.detail-grid {
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+}
+
+.trade-drawer-list {
+  display: grid;
+  gap: 10px;
+}
+
+.trade-drawer-item {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.trade-drawer-item p,
+.detail-notes-card p {
+  margin: 0;
+  color: #6b7280;
+}
+
+.detail-notes-card {
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.04);
+  height: fit-content;
+}
+
+.detail-empty-state {
+  padding: 20px;
+}
+
+@media (max-width: 1080px) {
+  .calendar-summary-bar,
+  .detail-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 840px) {
+  .calendar-toolbar,
+  .detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .calendar-weekdays,
+  .calendar-month-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .calendar-summary-bar,
+  .detail-stats,
+  .calendar-weekdays,
+  .calendar-month-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .trade-drawer-item {
+    flex-direction: column;
+  }
+}

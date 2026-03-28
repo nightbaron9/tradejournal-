@@ -1,72 +1,11 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { AppShell } from './components/AppShell'
-import { dashboardSummary, journalEntries, openPositions, tradeRows } from './data/mockData'
+import { CalendarDashboard } from './components/CalendarDashboard'
+import { journalEntries, openPositions, tradeRows } from './data/mockData'
 import { ResetPasswordPage } from './pages/ResetPasswordPage'
 import { SignInPage } from './pages/SignInPage'
 import { SignUpPage } from './pages/SignUpPage'
 import './App.css'
-
-const DashboardHome = () => (
-  <div className="screen-stack">
-    <section className="panel">
-      <div className="panel-heading">
-        <div>
-          <h2>Calendar performance overview</h2>
-          <p>Daily realized P/L stays separate from open position performance.</p>
-        </div>
-        <button className="secondary-btn" type="button">
-          Connect broker
-        </button>
-      </div>
-
-      <div className="metrics-grid">
-        {dashboardSummary.map((metric) => (
-          <article className="metric-card" key={metric.label}>
-            <span className="metric-label">{metric.label}</span>
-            <strong className={`metric-value ${metric.tone ?? 'neutral'}`}>{metric.value}</strong>
-            <span className="metric-detail">{metric.detail}</span>
-          </article>
-        ))}
-      </div>
-    </section>
-
-    <section className="panel split-panel">
-      <div>
-        <div className="section-label">This month</div>
-        <h3>March 2026 calendar snapshot</h3>
-        <p className="section-copy">
-          The React shell keeps the prototype&apos;s calendar-first layout while preparing for
-          real aggregation and drill-down behavior.
-        </p>
-        <div className="calendar-grid">
-          {['Mon 2', 'Tue 3', 'Wed 4', 'Thu 5', 'Fri 6', 'Mon 9'].map((day, index) => (
-            <div
-              className={`calendar-day ${
-                index % 3 === 0 ? 'positive' : index % 3 === 1 ? 'negative' : ''
-              }`}
-              key={day}
-            >
-              <span>{day}</span>
-              <strong>{index % 3 === 1 ? '-$180' : '+$420'}</strong>
-              <small>{index + 1} trades</small>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <aside className="detail-card">
-        <div className="section-label">Selected day</div>
-        <h3>Friday, Mar 6</h3>
-        <strong className="detail-pl positive">+$420</strong>
-        <ul className="detail-list">
-          <li>3 closed trades</li>
-          <li>2 wins / 1 loss</li>
-          <li>Notes and tags available</li>
-        </ul>
-      </aside>
-    </section>
-  </div>
-)
 
 const TradesPage = () => (
   <div className="screen-stack">
@@ -214,7 +153,7 @@ function App() {
 
       <Route path="/app" element={<AppShell />}>
         <Route index element={<Navigate to="/app/dashboard" replace />} />
-        <Route path="dashboard" element={<DashboardHome />} />
+        <Route path="dashboard" element={<CalendarDashboard />} />
         <Route path="trades" element={<TradesPage />} />
         <Route path="positions" element={<PositionsPage />} />
         <Route
