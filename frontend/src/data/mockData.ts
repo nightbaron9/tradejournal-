@@ -50,6 +50,29 @@ export type CalendarRecord = {
   trades: CalendarTrade[]
 }
 
+export type SettingsProfile = {
+  name: string
+  email: string
+  timezone: string
+  currency: string
+  dateFormat: string
+}
+
+export type BrokerConnection = {
+  brokerName: string
+  connected: boolean
+  statusLabel: string
+  lastSync: string
+  syncFrequency: string
+  autoImportTrades: boolean
+}
+
+export type SettingsNotificationPreferences = {
+  journalReminder: boolean
+  weeklyReview: boolean
+  brokerSyncErrors: boolean
+}
+
 export const dashboardSummary: MetricCard[] = [
   {
     label: 'Total realized P/L',
@@ -281,3 +304,43 @@ export const calendarRecords: CalendarRecord[] = [
     ],
   },
 ]
+
+export const settingsProfile: SettingsProfile = {
+  name: 'Brian Lin',
+  email: 'brian@tradelog.io',
+  timezone: 'America/New_York',
+  currency: 'USD',
+  dateFormat: 'MMM d, yyyy',
+}
+
+export const brokerConnection: BrokerConnection = {
+  brokerName: 'Interactive Brokers',
+  connected: true,
+  statusLabel: 'Connected',
+  lastSync: '2 min ago',
+  syncFrequency: '2 minutes',
+  autoImportTrades: true,
+}
+
+export const settingsNotificationPreferences: SettingsNotificationPreferences = {
+  journalReminder: true,
+  weeklyReview: true,
+  brokerSyncErrors: true,
+}
+
+export const brokerOptions = [
+  'Interactive Brokers',
+  'Alpaca',
+  'TradeStation',
+]
+
+export const timezoneOptions = [
+  'America/New_York',
+  'America/Chicago',
+  'America/Los_Angeles',
+  'UTC',
+]
+
+export const currencyOptions = ['USD', 'EUR', 'GBP']
+
+export const dateFormatOptions = ['MMM d, yyyy', 'MM/dd/yyyy', 'yyyy-MM-dd']

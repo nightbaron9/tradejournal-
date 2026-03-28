@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { AppShell } from './components/AppShell'
 import { CalendarDashboard } from './components/CalendarDashboard'
+import { SettingsPanel } from './components/SettingsPanel'
 import { journalEntries, openPositions, tradeRows } from './data/mockData'
 import { ResetPasswordPage } from './pages/ResetPasswordPage'
 import { SignInPage } from './pages/SignInPage'
@@ -166,15 +167,7 @@ function App() {
           }
         />
         <Route path="journal" element={<JournalPage />} />
-        <Route
-          path="settings"
-          element={
-            <PlaceholderPage
-              title="Settings"
-              copy="Settings will eventually cover broker connection, sync status, profile, and account controls."
-            />
-          }
-        />
+        <Route path="settings" element={<SettingsPanel />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/auth/sign-in" replace />} />
