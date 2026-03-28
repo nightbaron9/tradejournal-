@@ -1,433 +1,529 @@
-# TradeLog Product Requirements Document
+# Product Requirements Document (PRD)
 
-## 1. Overview
+## Product Name
 
-TradeLog is a web application for active traders who want to authenticate securely, review trading performance, analyze closed and open positions, and keep a daily trading journal in one place.
+Calendar-Based Trading Journal
 
-This repository currently includes two clickable HTML prototypes:
+## Document Status
 
-- `index.html` - authentication flows
-- `dashboard.html` - authenticated application experience
+Draft v1.0
 
-These prototypes should be treated as the initial UI reference for the product's information architecture, interactions, and visual direction.
+## Owner
 
-## 2. Product Problem
+Brian Lin
 
-Retail and professional traders often manage performance review, trade journaling, and broker context across multiple tools. That creates friction for:
+## Purpose
 
-- reviewing daily and monthly performance,
-- identifying repeatable setups,
-- understanding open risk,
-- documenting trading lessons while context is fresh.
+This document defines the purpose, scope, features, functionality, and expected behavior of a calendar-based trading journal application that helps traders monitor and evaluate trading performance. It is intended to guide engineering, design, and stakeholder alignment during product development.
 
-TradeLog aims to consolidate those workflows into a single product with a lightweight, fast, dashboard-first experience.
+---
 
-## 3. Target Users
+## 1. Product Overview
 
-### Primary user
+### 1.1 Product Summary
 
-- Self-directed trader who wants to track P&L, setups, habits, and lessons learned.
+The Calendar-Based Trading Journal is a web application that allows traders to track and review their performance through a calendar-first interface. The app will show realized profit and loss (P/L) on a daily calendar, display open positions with slightly delayed unrealized P/L from a connected broker, and provide key trading performance metrics such as win rate, average win, average loss, and total realized P/L.
 
-### Secondary users
+The product is intended to support trader self-review, performance analysis, and pattern recognition. It is not intended to execute trades, provide financial advice, or function as a brokerage platform.
 
-- Swing traders monitoring both realized and unrealized P&L
-- Day traders reviewing daily execution patterns
-- Performance-focused traders who want analytics without a spreadsheet workflow
+### 1.2 Vision
 
-## 4. Product Goals
+Give traders a clean, intuitive way to understand how they are performing over time by combining broker-connected data, historical trade review, and calendar-based performance visualization.
 
-1. Allow users to create and access an account with modern authentication UX.
-2. Give users a fast at-a-glance view of current trading performance.
-3. Make it easy to inspect historical trading activity by day, trade, symbol, and setup.
-4. Support reflective journaling tied to calendar days and trade outcomes.
-5. Provide actionable analytics that help users improve process and risk management.
+### 1.3 Problem Statement
 
-## 5. Non-Goals for MVP
+Many traders struggle to consistently review performance in a structured way. Brokerage platforms may show positions and account balances, but often do not provide a focused, journaling-oriented experience that helps traders understand:
 
-- Live brokerage order entry
-- Automated strategy execution
-- Social features or public sharing
-- Tax reporting workflows
-- Multi-user teams or advisor dashboards
-- Native mobile applications
+* How they perform day by day
+* Which days were profitable or unprofitable
+* Their win rate and net results over time
+* Their open positions and unrealized P/L
+* The relationship between daily behavior and trading outcomes
 
-## 6. MVP Scope
+Existing tools are often either too basic, too expensive, too cluttered, or not designed around a visual review workflow.
 
-### In scope
+### 1.4 Product Goals
 
-- Authentication screens and flows
-- Dashboard summary widgets
-- Monthly performance calendar
-- Trade log with filtering and sorting
-- Open positions view
-- Analytics dashboard
-- Notes and journal experience
-- User settings
+* Provide a calendar-first user experience for daily performance review
+* Allow users to connect a broker account and import/sync position and trade data
+* Surface core metrics that help traders evaluate performance
+* Distinguish clearly between realized and unrealized P/L
+* Create a simple, trustworthy interface that users can check daily
+* Support a phased MVP that can be expanded later
 
-### Out of scope for initial implementation
+### 1.5 Non-Goals
 
-- Real backend integration
-- Real broker sync
-- File storage pipelines
-- Notification delivery infrastructure beyond stubbed UX
-- Role-based access control
+The MVP will not:
 
-## 7. Information Architecture
+* Execute trades
+* Provide tax reporting
+* Support multiple brokers at launch
+* Support social/community features
+* Support advanced options analytics or Greeks
+* Provide tick-by-tick real-time streaming in v1
+* Function as a portfolio management or order management system
 
-The authenticated app should include the following primary navigation:
+---
 
-1. Dashboard
-2. Trade Log
-3. Open Positions
-4. Analytics
-5. Notes & Journal
-6. Settings
+## 2. Target Users
 
-The app should support a collapsible sidebar and a persistent top bar with the current screen title and reporting period controls.
+### 2.1 Primary User
 
-## 8. Authentication Requirements
+Active retail traders who want to review trading performance, track wins and losses, and monitor open positions through a clean dashboard.
 
-The `index.html` prototype defines five auth panels:
+### 2.2 User Characteristics
 
-1. Sign in
-2. Create account
-3. Email verification
-4. Password reset request
-5. Set new password
+* Trades stocks and/or simple instruments
+* Wants insight into daily trading behavior
+* Values visual summaries and performance trends
+* May currently use spreadsheets or brokerage history pages
+* Wants broker-connected automation rather than fully manual entry
 
-### 8.1 Sign in
+### 2.3 User Needs
 
-Users must be able to:
+* See daily performance quickly
+* Understand current open-position status
+* Track realized P/L and win rate accurately
+* Review past trading days in a structured way
+* Trust that the displayed data is consistent and understandable
 
-- enter email and password,
-- toggle password visibility,
-- optionally select "keep me signed in for 30 days",
-- navigate to account creation,
-- navigate to forgot password,
-- submit with keyboard enter support.
+---
 
-Validation and UX requirements:
+## 3. Core Product Principles
 
-- invalid email should show inline field error,
-- failed authentication should show a top-level error banner,
-- repeated failures should trigger a temporary lockout message with countdown,
-- sign-in button should support loading state.
+1. **Calendar first**: the calendar is the primary interface, not an afterthought.
+2. **Trustworthy metrics**: performance calculations must be clearly defined and consistent.
+3. **Realized vs unrealized separation**: historical results and live position values must not be confused.
+4. **Simplicity over complexity**: the initial experience should feel easy to use and easy to read.
+5. **Broker-connected, not broker-dependent**: the app should normalize broker data into its own structure.
 
-### 8.2 Create account
+---
 
-Users must be able to:
+## 4. Scope
 
-- enter full name,
-- enter email,
-- create password,
-- confirm password,
-- accept terms and privacy policy,
-- submit account creation.
+### 4.1 MVP Scope
 
-Validation requirements:
+The MVP will include:
 
-- name is required,
-- email must be valid,
-- password must be at least 12 characters,
-- password strength indicator should update as user types,
-- confirm password must match,
-- terms acceptance is required.
+* User authentication
+* One supported broker integration
+* Broker connection flow
+* Periodic sync of open positions
+* Import/sync of completed trade data if available from broker
+* Calendar view with daily realized P/L
+* Dashboard summary metrics
+* Open positions panel
+* Daily trade detail view
+* Notes/tags support at basic level
 
-### 8.3 Email verification
+### 4.2 Post-MVP Scope
 
-After successful sign-up, the app should:
+Potential future enhancements:
 
-- show a verification confirmation screen,
-- display the email address being verified,
-- allow resend verification with cooldown protection,
-- offer navigation back to sign in.
+* Multiple broker support
+* CSV import
+* Screenshot attachments
+* Advanced filtering and search
+* Setup-based performance analytics
+* Equity curve chart
+* Streak and consistency tracking
+* Mobile optimization and native app versions
+* Options-specific analytics
+* Notifications and reminders
 
-### 8.4 Password reset request
+---
 
-Users must be able to:
+## 5. Functional Requirements
 
-- submit their email address to request a reset link,
-- see a success state confirming the email was sent,
-- return to sign in.
+### 5.1 Authentication and User Accounts
 
-### 8.5 Set new password
+**Description:** Users must be able to create an account, sign in, and securely access their own journal data.
 
-Users must be able to:
+**Requirements:**
 
-- enter a new password,
-- confirm it,
-- view password strength,
-- complete password reset,
-- see an expired-link style error when relevant.
+* Users can sign up with email/password or supported auth provider
+* Users can sign in and sign out
+* Each user only sees their own data
+* Sessions persist securely across visits
 
-On successful completion, the flow should transition into the authenticated experience.
+**Expected Behavior:**
 
-## 9. Application Requirements
+* Unauthenticated users are redirected to login/signup
+* Authenticated users are routed to the main dashboard/calendar
 
-## 9.1 Dashboard
+---
 
-The dashboard is the default authenticated landing screen.
+### 5.2 Broker Connection
 
-Required capabilities:
+**Description:** Users can connect one broker account in order to import positions and trade history.
 
-- summary widgets showing key trading metrics,
-- configurable widget slots from grouped metric choices,
-- monthly trading calendar with daily P&L states,
-- weekly summary column,
-- header summary for month-level P&L and active trading days,
-- selectable trading day drawer with:
-  - date,
-  - day P&L,
-  - win/loss stats,
-  - list of trades,
-  - freeform notes.
+**Requirements:**
 
-Expected behavior:
+* Support one broker in MVP
+* User can initiate broker connection flow
+* Access credentials/tokens must be stored securely server-side
+* User can disconnect broker account
+* App stores broker account metadata and connection status
 
-- users can switch reporting period between MTD, YTD, and all time,
-- widget selections recalculate with current period,
-- clicking a day opens contextual drill-down.
+**Expected Behavior:**
 
-## 9.2 Trade Log
+* A connected user sees sync status and broker connection confirmation
+* A disconnected user is prompted to connect a broker before live syncing works
 
-The trade log should present a table of closed trades and support:
+**Notes:**
 
-- symbol search,
-- filtering by side,
-- filtering by result,
-- filtering by setup,
-- sortable columns,
-- summary stats strip above the table,
-- visible trade count.
+* Broker selection for MVP should prioritize accessible documentation and position/trade endpoints
+* Slightly delayed synchronization is acceptable in v1
 
-Each row should expose at minimum:
+---
 
-- symbol,
-- date,
-- side,
-- entry price,
-- exit price,
-- quantity,
-- P&L,
-- setup/tag context.
+### 5.3 Position Sync
 
-## 9.3 Open Positions
+**Description:** The system periodically syncs open positions from the connected broker.
 
-The open positions screen should include:
+**Requirements:**
 
-- summary cards for unrealized performance and exposure,
-- a sortable positions table,
-- position allocation visualization,
-- long vs short exposure breakdown,
-- notes or commentary area for active positions,
-- manual refresh/sync action.
+* Fetch open positions on a configurable interval (recommended: every 1 to 5 minutes)
+* Store position snapshots in the application database
+* Display current open positions in the UI
+* Show unrealized P/L separately from realized P/L
 
-The UI should distinguish realized portfolio review from current open-risk monitoring.
+**Expected Behavior:**
 
-## 9.4 Analytics
+* Users see current open positions with symbol, quantity, average entry, current value, and unrealized P/L
+* If sync fails, users see a non-blocking status/error state
+* Last updated timestamp is visible
 
-The analytics screen should support:
+---
 
-- summary metrics for the selected range,
-- filter drawer for side, result, symbol, and session,
-- equity curve,
-- daily P&L,
-- rolling win rate,
-- P&L distribution,
-- win vs loss size comparison,
-- streak analysis,
-- risk cards,
-- weekday/hour/session breakdowns,
-- symbol performance chart,
-- long vs short comparison.
-
-Requirements:
-
-- analytics should recompute from current filters,
-- filter badge should indicate active filters,
-- reset action should clear analytics filters.
-
-## 9.5 Notes & Journal
-
-The journal experience should combine calendar context with reflective writing.
-
-Required capabilities:
-
-- mini calendar navigation,
-- date selection,
-- journal entry list for the current month,
-- search across notes,
-- filter by tag,
-- filter by mood,
-- expandable entry detail,
-- lesson tracking,
-- mood selection,
-- tag management,
-- quick creation of new entries.
-
-Journal data should stay connected to trading dates so users can correlate execution quality and emotional state with outcomes.
-
-## 9.6 Settings
-
-The settings area should cover:
-
-- broker connection status and sync preferences,
-- profile details,
-- timezone, currency, and date format preferences,
-- trading preferences,
-- notification and reminder toggles,
-- account management actions.
+### 5.4 Trade History Import / Sync
 
-Destructive actions should require confirmation in a production implementation.
-
-## 10. Data Model Requirements
-
-The product should support, at minimum, these entities:
-
-### User
-
-- id
-- name
-- email
-- password hash
-- timezone
-- currency
-- date format
-- preferences
-
-### Broker connection
-
-- id
-- user id
-- broker name
-- connection status
-- last synced at
-- sync frequency
-
-### Trade
-
-- id
-- user id
-- broker connection id
-- symbol
-- side
-- quantity
-- entry price
-- exit price
-- opened at
-- closed at
-- realized P&L
-- setup tag
-- session
-- notes
-
-### Position
-
-- id
-- user id
-- symbol
-- side
-- quantity
-- average entry
-- last price
-- market value
-- unrealized P&L
-- updated at
-
-### Journal entry
-
-- id
-- user id
-- trade date
-- note
-- lessons learned
-- mood
-- confidence
-- tags
-
-### Daily performance snapshot
-
-- id
-- user id
-- date
-- realized P&L
-- trade count
-- win count
-- loss count
-
-## 11. Functional Requirements
-
-### Required system behavior
-
-- The app must support a responsive layout for desktop and smaller screens.
-- The sidebar must collapse and expand.
-- Screen navigation must update the topbar title.
-- Period selection must refresh dashboard and analytics views.
-- Journal notes entered from calendar/day context should stay synchronized with journal entries.
-- Settings changes should support autosave-style interactions in the UI.
-
-### Validation and state handling
-
-- Forms must provide inline validation.
-- Loading, success, and error states must be visible in the UI.
-- Empty states should be shown where data is absent.
-- Destructive settings actions must be guarded by confirmation.
-
-## 12. Visual and UX Principles
-
-The prototype suggests the following visual direction:
-
-- clean, desktop-first SaaS layout,
-- light theme with subtle card shadows,
-- compact information density,
-- blue as primary action color,
-- green/red semantic use for profit and loss,
-- restrained typography with Inter and Inter Tight,
-- drill-down interactions instead of full page transitions where possible.
-
-## 13. Technical Notes for Implementation
-
-The current HTML files are static prototypes with inline CSS and JavaScript. A production implementation should likely:
-
-- separate presentation, state, and data layers,
-- move repeated UI patterns into reusable components,
-- replace inline event handlers with application logic,
-- connect prototype demo data to real persisted backend data,
-- define API contracts for auth, trades, positions, analytics, journal, and settings.
-
-## 14. Suggested MVP Build Order
-
-1. Convert static auth screens into real authenticated flows.
-2. Establish core app shell with sidebar, topbar, and screen routing.
-3. Implement trade and daily performance data model.
-4. Build dashboard metrics and calendar.
-5. Implement trade log filters and table.
-6. Add journal entry persistence and calendar-note syncing.
-7. Add open positions and analytics views.
-8. Finish settings and broker sync workflows.
-
-## 15. Success Metrics
-
-- account creation completion rate,
-- sign-in success rate,
-- weekly active traders,
-- journal entry completion rate,
-- percentage of users reviewing analytics weekly,
-- number of tagged trades per active user,
-- retention of users after first broker sync.
-
-## 16. Open Questions
-
-1. Which broker integrations should be supported first?
-2. Should users manually import trades before live broker sync exists?
-3. Which analytics are required for MVP versus later releases?
-4. What is the canonical taxonomy for setups, tags, and sessions?
-5. Should journal notes attach to individual trades, days, or both?
-6. What retention and deletion policies are required for trading data?
-7. Is the initial release desktop-only, or should mobile usability be a formal requirement?
-
-## 17. Deliverables in This Branch
-
-- Restored initial clickable UI prototypes in `index.html` and `dashboard.html`
-- Product requirements document in `docs/product-requirements.md`
+**Description:** The app imports closed trades or fills from the broker and uses them to build journal history.
 
+**Requirements:**
+
+* Pull historical trade/order data where supported
+* Normalize imported data into app-specific trade records
+* Avoid duplicate records on repeated syncs
+* Support incremental updates after initial import
+
+**Expected Behavior:**
+
+* Users see past trades represented consistently in the journal
+* Historical data can be re-synced without corrupting totals
+
+---
+
+### 5.5 Calendar View
+
+**Description:** The calendar is the primary interface for reviewing daily realized performance.
+
+**Requirements:**
+
+* Month-based calendar layout
+* Each day cell shows daily realized P/L
+* Each day cell shows trade count
+* Each day visually indicates positive, negative, or neutral result
+* Users can click a day to view more detail
+
+**Expected Behavior:**
+
+* Green state for profitable day
+* Red state for losing day
+* Neutral/gray state for zero or no activity
+* Users can navigate between months
+
+**Calendar Definition:**
+For MVP, each calendar day represents **net realized P/L from trades closed on that date**.
+
+This does **not** include unrealized P/L from open positions.
+
+---
+
+### 5.6 Daily Detail View
+
+**Description:** Users can inspect the details of a selected calendar day.
+
+**Requirements:**
+
+* Show all closed trades for the selected day
+* Show net daily realized P/L
+* Show trade count, wins, losses
+* Show notes or tags if present
+
+**Expected Behavior:**
+
+* Clicking a day opens a panel, drawer, or dedicated page
+* Users can quickly review what happened that day
+
+---
+
+### 5.7 Dashboard Metrics
+
+**Description:** The product surfaces key summary metrics that help users assess overall performance.
+
+**Requirements:**
+
+* Total closed trades
+* Win rate
+* Total realized P/L
+* Average win
+* Average loss
+* Optional: current unrealized P/L summary
+
+**Metric Definitions:**
+
+* **Win Rate** = number of profitable closed trades / total closed trades
+* **Total Realized P/L** = sum of P/L from all closed trades in scope
+* **Average Win** = average P/L of profitable closed trades
+* **Average Loss** = average P/L of losing closed trades
+
+**Expected Behavior:**
+
+* Metrics update as imported/synced trade data changes
+* Users can trust that all metrics are based on closed trades unless clearly labeled otherwise
+
+---
+
+### 5.8 Open Positions Panel
+
+**Description:** A dedicated section displays current broker-connected open positions.
+
+**Requirements:**
+
+* Show current open positions
+* Show symbol, quantity, cost basis/average entry, market value, unrealized P/L
+* Show last sync time
+* Refresh on slightly delayed schedule
+
+**Expected Behavior:**
+
+* Users can distinguish open positions from historical trades
+* Panel is visually separate from calendar history
+
+---
+
+### 5.9 Notes and Tags
+
+**Description:** Users can annotate trade activity with notes or simple tags.
+
+**Requirements:**
+
+* Add/edit note for a trade or day
+* Add/edit simple tags such as setup names
+* Persist metadata with trade/day records
+
+**Expected Behavior:**
+
+* Notes help users review lessons and patterns later
+* Tags can later support filtering and analytics
+
+---
+
+## 6. Data Definitions and Behavior
+
+### 6.1 Core Definitions
+
+To prevent confusion, the product must use the following concepts consistently:
+
+* **Closed Trade:** A trade or position that has been fully exited and is eligible for realized P/L reporting
+* **Realized P/L:** Profit or loss associated with closed trades only
+* **Open Position:** A currently active position not yet fully exited
+* **Unrealized P/L:** Current estimated profit or loss on open positions based on latest synced broker data
+* **Daily Performance:** Net realized P/L for trades closed on a given date
+
+### 6.2 Important Rules
+
+* The calendar shows **realized** P/L only
+* Open-position fluctuations do not alter past calendar totals
+* Unrealized P/L is shown only in the open positions area or explicitly labeled components
+* If fees are included, they must be included consistently throughout all calculations
+* Timezone behavior must be defined for daily aggregation and displayed consistently to the user
+
+### 6.3 Edge Cases to Handle
+
+* Duplicate trade imports
+* Missing or partial broker data
+* Partial exits
+* Short positions
+* Delayed price updates
+* Temporary API failures
+* Market closed periods
+
+MVP may defer some advanced edge-case handling, but system behavior must remain stable and transparent.
+
+---
+
+## 7. User Experience Requirements
+
+### 7.1 UX Goals
+
+* The app should feel clean, modern, and focused
+* The calendar should be the primary visual anchor
+* The interface should avoid clutter and overloading users with too many metrics at once
+* Users should understand the difference between historical results and live position data immediately
+
+### 7.2 Design Expectations
+
+* Clear positive/negative visual cues
+* Easy monthly navigation
+* Fast access to day-level detail
+* Responsive layout suitable for desktop first
+* Mobile responsiveness desirable, though desktop may be prioritized for MVP
+
+### 7.3 Core Screens
+
+* Authentication screen
+* Main dashboard/calendar screen
+* Broker connection/settings screen
+* Daily detail view
+* Open positions panel/component
+
+---
+
+## 8. Technical Requirements
+
+### 8.1 Architecture
+
+The app should use a web architecture that separates frontend UI from backend broker/data logic.
+
+Suggested architecture:
+
+* Frontend web app
+* Backend/server routes for broker interactions
+* Database for normalized trade and performance records
+* Scheduled jobs for periodic sync
+
+### 8.2 Data Storage
+
+The application must store normalized internal records for:
+
+* users
+* broker connections
+* trades
+* position snapshots
+* daily performance aggregates
+* notes/tags
+
+### 8.3 Security
+
+* Broker credentials/tokens must never be exposed client-side
+* Sensitive secrets must be stored securely server-side
+* User data must be isolated by account
+* Access controls must prevent cross-user data exposure
+
+### 8.4 Performance
+
+* Calendar page should load quickly with summarized monthly data
+* Position sync should not block UI rendering
+* Dashboard metrics should be derived efficiently from stored data
+
+---
+
+## 9. Reporting and Metrics Accuracy Requirements
+
+The product must prioritize trust and consistency over excessive feature scope.
+
+### Requirements:
+
+* All metric formulas must be documented and consistent
+* Any value that is estimated, delayed, or broker-sourced should be labeled appropriately
+* Historical daily totals must remain stable once imported and processed unless a resync or correction occurs
+* The system should log sync failures or discrepancies for debugging
+
+---
+
+## 10. Success Metrics
+
+### 10.1 Product Success Metrics
+
+* Users can connect a broker account successfully
+* Users can view daily performance on the calendar without manual entry
+* Users can identify open positions and unrealized P/L clearly
+* Users can understand win rate and realized P/L at a glance
+* Users return regularly to review performance
+
+### 10.2 MVP Success Criteria
+
+The MVP is successful if a user can:
+
+1. Create an account
+2. Connect one broker
+3. View open positions with slightly delayed unrealized P/L
+4. See historical daily realized P/L on a calendar
+5. Open a day and inspect trade details
+6. View summary performance metrics with confidence
+
+---
+
+## 11. Risks and Considerations
+
+### 11.1 Product Risks
+
+* Ambiguous P/L definitions may reduce trust
+* Broker API limitations may affect data completeness
+* Sync delays may cause confusion if not clearly communicated
+* Supporting too many features too early may slow delivery
+
+### 11.2 Technical Risks
+
+* Broker auth complexity
+* Inconsistent trade/fill schemas
+* Data reconciliation issues between positions and trade history
+* Edge-case handling for partial exits and short positions
+
+### 11.3 Mitigation Strategy
+
+* Start with one broker only
+* Use slightly delayed sync rather than full live streaming
+* Document formulas clearly
+* Separate realized and unrealized data in both backend and UI
+* Normalize broker data into internal schemas
+
+---
+
+## 12. Release Plan
+
+### Phase 1
+
+* Finalize requirements
+* Define database schema
+* Build static UI with mock data
+
+### Phase 2
+
+* Add authentication
+* Add broker connection flow
+* Add backend data model
+
+### Phase 3
+
+* Implement trade import and daily aggregation
+* Build calendar behavior with real data
+
+### Phase 4
+
+* Implement open positions sync
+* Display unrealized P/L and sync timestamps
+
+### Phase 5
+
+* Refine dashboard, notes/tags, and UX polish
+* Prepare for user testing and iteration
+
+---
+
+## 13. Open Questions
+
+* Which broker will be supported first?
+* Will fees be included in realized P/L from launch?
+* Will partial exits be fully supported in MVP or deferred?
+* Which asset classes are supported in v1: equities only, or more?
+* What timezone will be used for day aggregation and display?
+* Will users be allowed to manually edit imported trade data?
+
+---
+
+## 14. Final Product Statement
+
+The Calendar-Based Trading Journal is a broker-connected web application designed to help traders review historical performance and monitor current positions through a clean, calendar-first interface. The MVP will focus on trustworthy performance tracking, clear distinction between realized and unrealized P/L, and a simple workflow that makes daily review fast and intuitive.
