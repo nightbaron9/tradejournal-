@@ -1093,6 +1093,202 @@ th {
   font-size: 13px;
 }
 
+.analytics-stack {
+  display: grid;
+  gap: 20px;
+}
+
+.analytics-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.analytics-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.analytics-filter-grid,
+.analytics-summary-grid,
+.analytics-chart-grid,
+.analytics-bottom-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.analytics-filter-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.analytics-summary-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.analytics-chart-grid,
+.analytics-bottom-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.analytics-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.04);
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+}
+
+.analytics-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.analytics-card-header h3 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: -0.03em;
+}
+
+.analytics-card-header p {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.analytics-filter-field {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  color: #374151;
+}
+
+.analytics-filter-field select {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: #ffffff;
+  color: #111827;
+}
+
+.analytics-filter-field select:focus {
+  outline: 2px solid rgba(37, 99, 235, 0.15);
+  border-color: #2563eb;
+}
+
+.analytics-summary-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.04);
+  padding: 18px;
+  display: grid;
+  gap: 8px;
+}
+
+.analytics-summary-card strong {
+  font-size: 30px;
+  letter-spacing: -0.03em;
+}
+
+.analytics-summary-card span,
+.analytics-meta {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.analytics-bars {
+  display: grid;
+  gap: 10px;
+}
+
+.analytics-bar-row {
+  display: grid;
+  gap: 6px;
+}
+
+.analytics-bar-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.analytics-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  overflow: hidden;
+}
+
+.analytics-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #2563eb;
+}
+
+.analytics-fill.positive {
+  background: #16a34a;
+}
+
+.analytics-fill.negative {
+  background: #dc2626;
+}
+
+.analytics-pill-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.analytics-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.analytics-table {
+  display: grid;
+  gap: 10px;
+}
+
+.analytics-table-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+}
+
+.analytics-empty {
+  padding: 16px;
+  border-radius: 14px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  color: #6b7280;
+  font-size: 13px;
+}
+
 @media (max-width: 1080px) {
   .calendar-summary-bar,
   .detail-stats {
@@ -1107,11 +1303,19 @@ th {
   .settings-form-grid {
     grid-template-columns: 1fr;
   }
+
+  .analytics-filter-grid,
+  .analytics-summary-grid,
+  .analytics-chart-grid,
+  .analytics-bottom-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 840px) {
   .calendar-toolbar,
-  .detail-header {
+  .detail-header,
+  .analytics-toolbar {
     flex-direction: column;
     align-items: flex-start;
   }
@@ -1126,7 +1330,11 @@ th {
   .calendar-summary-bar,
   .detail-stats,
   .calendar-weekdays,
-  .calendar-month-grid {
+  .calendar-month-grid,
+  .analytics-filter-grid,
+  .analytics-summary-grid,
+  .analytics-chart-grid,
+  .analytics-bottom-grid {
     grid-template-columns: 1fr;
   }
 

@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
+import { AnalyticsPanel } from './components/AnalyticsPanel'
 import { AppShell } from './components/AppShell'
 import { CalendarDashboard } from './components/CalendarDashboard'
 import { SettingsPanel } from './components/SettingsPanel'
@@ -122,28 +123,6 @@ const JournalPage = () => (
   </div>
 )
 
-const PlaceholderPage = ({
-  title,
-  copy,
-}: {
-  title: string
-  copy: string
-}) => (
-  <div className="screen-stack">
-    <section className="panel">
-      <div className="panel-heading">
-        <div>
-          <h2>{title}</h2>
-          <p>{copy}</p>
-        </div>
-      </div>
-      <div className="placeholder-card">
-        <p>This screen is scaffolded in the React app shell and ready for deeper implementation.</p>
-      </div>
-    </section>
-  </div>
-)
-
 function App() {
   return (
     <Routes>
@@ -157,15 +136,7 @@ function App() {
         <Route path="dashboard" element={<CalendarDashboard />} />
         <Route path="trades" element={<TradesPage />} />
         <Route path="positions" element={<PositionsPage />} />
-        <Route
-          path="analytics"
-          element={
-            <PlaceholderPage
-              title="Analytics"
-              copy="This routed shell is ready for the next move: porting charts and filter interactions from the prototype."
-            />
-          }
-        />
+        <Route path="analytics" element={<AnalyticsPanel />} />
         <Route path="journal" element={<JournalPage />} />
         <Route path="settings" element={<SettingsPanel />} />
       </Route>

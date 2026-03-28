@@ -73,6 +73,16 @@ export type SettingsNotificationPreferences = {
   brokerSyncErrors: boolean
 }
 
+export type AnalyticsTrade = {
+  id: string
+  date: string
+  symbol: string
+  side: 'Long' | 'Short'
+  session: 'Open' | 'Midday' | 'Close'
+  setup: string
+  pnl: number
+}
+
 export const dashboardSummary: MetricCard[] = [
   {
     label: 'Total realized P/L',
@@ -344,3 +354,213 @@ export const timezoneOptions = [
 export const currencyOptions = ['USD', 'EUR', 'GBP']
 
 export const dateFormatOptions = ['MMM d, yyyy', 'MM/dd/yyyy', 'yyyy-MM-dd']
+
+export const analyticsTrades: AnalyticsTrade[] = [
+  {
+    id: 'tr-001',
+    date: '2026-03-02',
+    symbol: 'NVDA',
+    side: 'Long',
+    session: 'Open',
+    setup: 'Opening range',
+    pnl: 280,
+  },
+  {
+    id: 'tr-002',
+    date: '2026-03-02',
+    symbol: 'AAPL',
+    side: 'Long',
+    session: 'Open',
+    setup: 'Trend continuation',
+    pnl: 190,
+  },
+  {
+    id: 'tr-003',
+    date: '2026-03-02',
+    symbol: 'TSLA',
+    side: 'Short',
+    session: 'Midday',
+    setup: 'VWAP fade',
+    pnl: -50,
+  },
+  {
+    id: 'tr-004',
+    date: '2026-03-03',
+    symbol: 'TSLA',
+    side: 'Short',
+    session: 'Open',
+    setup: 'Failed breakdown',
+    pnl: -120,
+  },
+  {
+    id: 'tr-005',
+    date: '2026-03-03',
+    symbol: 'SPY',
+    side: 'Long',
+    session: 'Midday',
+    setup: 'VWAP reclaim',
+    pnl: 70,
+  },
+  {
+    id: 'tr-006',
+    date: '2026-03-03',
+    symbol: 'AMD',
+    side: 'Long',
+    session: 'Close',
+    setup: 'Late chase',
+    pnl: -130,
+  },
+  {
+    id: 'tr-007',
+    date: '2026-03-04',
+    symbol: 'SPY',
+    side: 'Long',
+    session: 'Midday',
+    setup: 'VWAP reclaim',
+    pnl: 72,
+  },
+  {
+    id: 'tr-008',
+    date: '2026-03-06',
+    symbol: 'AAPL',
+    side: 'Long',
+    session: 'Open',
+    setup: 'Trend continuation',
+    pnl: 280,
+  },
+  {
+    id: 'tr-009',
+    date: '2026-03-06',
+    symbol: 'SPY',
+    side: 'Long',
+    session: 'Midday',
+    setup: 'Range breakout',
+    pnl: 170,
+  },
+  {
+    id: 'tr-010',
+    date: '2026-03-06',
+    symbol: 'QQQ',
+    side: 'Long',
+    session: 'Close',
+    setup: 'Pullback entry',
+    pnl: -30,
+  },
+  {
+    id: 'tr-011',
+    date: '2026-03-09',
+    symbol: 'TSLA',
+    side: 'Short',
+    session: 'Open',
+    setup: 'Failed breakdown',
+    pnl: -880,
+  },
+  {
+    id: 'tr-012',
+    date: '2026-03-09',
+    symbol: 'NVDA',
+    side: 'Short',
+    session: 'Midday',
+    setup: 'Countertrend scalp',
+    pnl: -190,
+  },
+  {
+    id: 'tr-013',
+    date: '2026-03-09',
+    symbol: 'SPY',
+    side: 'Long',
+    session: 'Midday',
+    setup: 'Reversal',
+    pnl: 140,
+  },
+  {
+    id: 'tr-014',
+    date: '2026-03-09',
+    symbol: 'META',
+    side: 'Short',
+    session: 'Close',
+    setup: 'Late fade',
+    pnl: -250,
+  },
+  {
+    id: 'tr-015',
+    date: '2026-03-10',
+    symbol: 'AAPL',
+    side: 'Long',
+    session: 'Open',
+    setup: 'Gap continuation',
+    pnl: 120,
+  },
+  {
+    id: 'tr-016',
+    date: '2026-03-10',
+    symbol: 'SPY',
+    side: 'Long',
+    session: 'Midday',
+    setup: 'Lunch trend',
+    pnl: 140,
+  },
+  {
+    id: 'tr-017',
+    date: '2026-03-10',
+    symbol: 'TSLA',
+    side: 'Short',
+    session: 'Close',
+    setup: 'Fade attempt',
+    pnl: -50,
+  },
+  {
+    id: 'tr-018',
+    date: '2026-03-11',
+    symbol: 'NVDA',
+    side: 'Long',
+    session: 'Open',
+    setup: 'Opening range',
+    pnl: 899,
+  },
+  {
+    id: 'tr-019',
+    date: '2026-03-11',
+    symbol: 'AMD',
+    side: 'Long',
+    session: 'Open',
+    setup: 'Trend continuation',
+    pnl: 540,
+  },
+  {
+    id: 'tr-020',
+    date: '2026-03-11',
+    symbol: 'META',
+    side: 'Long',
+    session: 'Midday',
+    setup: 'Breakout pullback',
+    pnl: 420,
+  },
+  {
+    id: 'tr-021',
+    date: '2026-03-11',
+    symbol: 'AAPL',
+    side: 'Long',
+    session: 'Midday',
+    setup: 'VWAP reclaim',
+    pnl: 590,
+  },
+  {
+    id: 'tr-022',
+    date: '2026-03-11',
+    symbol: 'QQQ',
+    side: 'Long',
+    session: 'Close',
+    setup: 'Scalp stopout',
+    pnl: -109,
+  },
+  {
+    id: 'tr-023',
+    date: '2026-03-12',
+    symbol: 'SPY',
+    side: 'Long',
+    session: 'Open',
+    setup: 'Range breakout',
+    pnl: 95,
+  },
+]
