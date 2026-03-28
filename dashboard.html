@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TradeLog</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Inter+Tight:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/dashboard.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="mobile-overlay" id="mobile-overlay" onclick="closeMobileSidebar()"></div>
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <div class="logo-mark" onclick="navigate('dashboard')">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 10L5.5 6L8 8.5L11.5 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="logo-text">TradeLog</span>
+      <button class="sidebar-toggle" onclick="toggleSidebar()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L5 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-sec">Main</div>
+      <div class="nav-item active" data-screen="dashboard" data-label="Dashboard" onclick="navigate('dashboard')">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="5" height="5" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="9.5" y="1.5" width="5" height="5" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="1.5" y="9.5" width="5" height="5" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="9.5" y="9.5" width="5" height="5" rx="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
+        <span class="nav-label">Dashboard</span>
+      </div>
+      <div class="nav-item" data-screen="tradelog" data-label="Trade Log" onclick="navigate('tradelog')">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M5 6h6M5 9h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <span class="nav-label">Trade Log</span>
+      </div>
+      <div class="nav-item" data-screen="positions" data-label="Open Positions" onclick="navigate('positions')">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 12L5.5 8L8.5 10L13 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="13" cy="5" r="1.5" fill="currentColor"/></svg>
+        <span class="nav-label">Open Positions</span>
+        <span class="nav-badge">4</span>
+      </div>
+      <div class="nav-item" data-screen="analytics" data-label="Analytics" onclick="navigate('analytics')">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 13h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><rect x="3" y="8" width="2.5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="6.8" y="5" width="2.5" height="8" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="10.5" y="3" width="2.5" height="10" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>
+        <span class="nav-label">Analytics</span>
+      </div>
+      <div class="nav-sec">Journal</div>
+      <div class="nav-item" data-screen="journal" data-label="Notes & Journal" onclick="navigate('journal')">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M4 2h8a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/><path d="M5.5 6h5M5.5 9h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <span class="nav-label">Notes &amp; Journal</span>
+      </div>
+      <div class="nav-sec">Account</div>
+      <div class="nav-item" data-screen="settings" data-label="Settings" onclick="navigate('settings')">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/><path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <span class="nav-label">Settings</span>
+      </div>
+    </nav>
+    <div class="sidebar-bottom">
+      <button class="expand-btn" onclick="toggleSidebar()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2L9 7L5 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="user-row">
+        <div class="avatar">BL</div>
+        <div class="user-info"><div class="user-name">Brian Lin</div><div class="user-plan">Pro plan</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="broker-chip"><span class="chip-dot"></span>IBKR connected</div>
+      <div class="topbar-right">
+        <div class="topbar-period">
+          <button class="period-btn active" data-period="mtd">MTD</button>
+          <button class="period-btn" data-period="ytd">YTD</button>
+          <button class="period-btn" data-period="all">All</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-area">
+
+      <!-- DASHBOARD -->
+      <div class="screen active" id="screen-dashboard">
+        <div class="content">
+          <div class="widgets-row" id="widgets-row"></div>
+          <div class="cal-card">
+            <div class="cal-header">
+              <button class="cal-nav" onclick="prevMonth()">&#8592;</button>
+              <div class="cal-month" id="month-label">March 2026</div>
+              <button class="cal-nav" onclick="nextMonth()">&#8594;</button>
+              <button class="this-month" onclick="goToday()">This month</button>
+              <div class="cal-hdr-right">
+                <span class="hsl">Monthly stats:</span>
+                <span class="hsv green" id="hdr-pl">+$4.23K</span>
+                <span class="hsv gray" id="hdr-days">13 days</span>
+              </div>
+            </div>
+            <div class="dow-row">
+              <div class="dow-cell">Sun</div><div class="dow-cell">Mon</div><div class="dow-cell">Tue</div><div class="dow-cell">Wed</div><div class="dow-cell">Thu</div><div class="dow-cell">Fri</div><div class="dow-cell">Sat</div>
+              <div class="dow-cell wcol"></div>
+            </div>
+            <div id="cal-body"></div>
+          </div>
+          <div class="day-drawer" id="day-drawer">
+            <div class="drawer-header">
+              <div class="drawer-left"><div class="drawer-date" id="drawer-date"></div><div class="drawer-pl" id="drawer-pl"></div></div>
+              <button class="drawer-close" onclick="clearSel()">✕ Close</button>
+            </div>
+            <div class="drawer-body">
+              <div class="drawer-stats" id="drawer-stats"></div>
+              <div class="drawer-trades" id="drawer-trades"></div>
+              <div class="drawer-notes" id="drawer-notes"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRADE LOG -->
+      <div class="screen" id="screen-tradelog">
+        <div class="content">
+
+          <!-- Toolbar -->
+          <div class="tl-toolbar">
+            <div class="tl-search">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.3"/><path d="M9 9l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              <input type="text" id="tl-search-input" placeholder="Search symbol…" oninput="applyFilters()">
+            </div>
+
+            <!-- Side filter -->
+            <div class="tl-filter" id="filter-side" onclick="toggleFilterDD('filter-side')">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4h8M3.5 6.5h5M5 9h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              <span id="filter-side-lbl">Side</span>
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div class="filter-dd" id="dd-side">
+                <div class="fd-item selected" data-val="all" onclick="setFilter('side','all',this,'filter-side-lbl','Side')">All sides</div>
+                <div class="fd-item" data-val="long" onclick="setFilter('side','long',this,'filter-side-lbl','Long')">Long</div>
+                <div class="fd-item" data-val="short" onclick="setFilter('side','short',this,'filter-side-lbl','Short')">Short</div>
+              </div>
+            </div>
+
+            <!-- Result filter -->
+            <div class="tl-filter" id="filter-result" onclick="toggleFilterDD('filter-result')">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4h8M3.5 6.5h5M5 9h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              <span id="filter-result-lbl">Result</span>
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div class="filter-dd" id="dd-result">
+                <div class="fd-item selected" data-val="all" onclick="setFilter('result','all',this,'filter-result-lbl','Result')">All results</div>
+                <div class="fd-item" data-val="win" onclick="setFilter('result','win',this,'filter-result-lbl','Wins only')">Wins only</div>
+                <div class="fd-item" data-val="loss" onclick="setFilter('result','loss',this,'filter-result-lbl','Losses only')">Losses only</div>
+              </div>
+            </div>
+
+            <!-- Tag filter -->
+            <div class="tl-filter" id="filter-tag" onclick="toggleFilterDD('filter-tag')">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4h8M3.5 6.5h5M5 9h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              <span id="filter-tag-lbl">Setup</span>
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div class="filter-dd" id="dd-tag">
+                <div class="fd-item selected" data-val="all" onclick="setFilter('tag','all',this,'filter-tag-lbl','Setup')">All setups</div>
+                <div class="fd-item" data-val="momentum" onclick="setFilter('tag','momentum',this,'filter-tag-lbl','Momentum')">Momentum</div>
+                <div class="fd-item" data-val="trend" onclick="setFilter('tag','trend',this,'filter-tag-lbl','Trend follow')">Trend follow</div>
+                <div class="fd-item" data-val="eod-fade" onclick="setFilter('tag','eod-fade',this,'filter-tag-lbl','EOD fade')">EOD fade</div>
+                <div class="fd-item" data-val="reversal" onclick="setFilter('tag','reversal',this,'filter-tag-lbl','Reversal')">Reversal</div>
+                <div class="fd-item" data-val="earnings-play" onclick="setFilter('tag','earnings-play',this,'filter-tag-lbl','Earnings play')">Earnings play</div>
+              </div>
+            </div>
+
+            <div class="tl-right">
+              <span class="tl-count" id="tl-count"><span>38</span> trades</span>
+            </div>
+          </div>
+
+          <!-- Summary strip -->
+          <div class="tl-summary" id="tl-summary"></div>
+
+          <!-- Table -->
+          <div class="tl-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th onclick="sortBy('sym')"><span>Symbol</span><span class="sort-arrow" id="sort-sym">↕</span></th>
+                  <th onclick="sortBy('date')"><span>Date</span><span class="sort-arrow sorted-arrow" id="sort-date">↓</span></th>
+                  <th>Side</th>
+                  <th onclick="sortBy('entry')"><span>Entry</span><span class="sort-arrow" id="sort-entry">↕</span></th>
+                  <th onclick="sortBy('exit')"><span>Exit</span><span class="sort-arrow" id="sort-exit">↕</span></th>
+                  <th onclick="sortBy('qty')"><span>Qty</span><span class="sort-arrow" id="sort-qty">↕</span></th>
+                  <th onclick="sortBy('pl')"><span>P&amp;L</span><span class="sort-arrow" id="sort-pl">↕</span></th>
+                  <th></th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody id="tl-tbody"></tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- POSITIONS -->
+      <div class="screen" id="screen-positions">
+        <div class="content">
+          <div class="pos-summary">
+            <div class="pos-stat"><div class="pos-stat-lbl">Open positions</div><div class="pos-stat-val k">4</div></div>
+            <div class="pos-stat"><div class="pos-stat-lbl">Unrealized P&amp;L</div><div class="pos-stat-val g" id="ps-unpl">+$1,698</div></div>
+            <div class="pos-stat"><div class="pos-stat-lbl">Market value</div><div class="pos-stat-val k">$62,344</div></div>
+            <div class="pos-stat"><div class="pos-stat-lbl">Buying power used</div><div class="pos-stat-val k">68%</div></div>
+            <div class="pos-stat pos-sync-stat">
+              <div class="pos-stat-lbl" id="pos-period-lbl">Period: MTD</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:4px;"><span class="sync-dot"></span><span style="font-family:'Inter Tight',sans-serif;font-size:14px;font-weight:600;color:var(--text)">2 min ago</span></div>
+              <button class="sync-btn" onclick="triggerSync()">Refresh</button>
+            </div>
+          </div>
+          <div class="pos-table-wrap">
+            <table class="pos-table">
+              <thead>
+                <tr>
+                  <th onclick="sortPos('sym')">Symbol <span class="sort-arrow" id="psort-sym">↕</span></th>
+                  <th>Side</th>
+                  <th onclick="sortPos('qty')">Qty <span class="sort-arrow" id="psort-qty">↕</span></th>
+                  <th onclick="sortPos('entry')">Avg entry <span class="sort-arrow" id="psort-entry">↕</span></th>
+                  <th onclick="sortPos('price')">Last price <span class="sort-arrow" id="psort-price">↕</span></th>
+                  <th onclick="sortPos('mktval')">Mkt value <span class="sort-arrow" id="psort-mktval">↕</span></th>
+                  <th onclick="sortPos('unpl')">Unreal. P&amp;L <span class="sort-arrow" id="psort-unpl">↓</span></th>
+                  <th onclick="sortPos('pct')">P&amp;L % <span class="sort-arrow" id="psort-pct">↕</span></th>
+                  <th>Day P&amp;L</th>
+                  <th>Opened</th>
+                </tr>
+              </thead>
+              <tbody id="pos-tbody"></tbody>
+            </table>
+          </div>
+          <div class="pos-bottom-row">
+            <div class="pos-card"><div class="pos-card-title">Allocation</div><div id="pos-alloc"></div></div>
+            <div class="pos-card"><div class="pos-card-title">Long vs Short exposure</div><div id="pos-ls"></div></div>
+            <div class="pos-card"><div class="pos-card-title">Position notes</div><div id="pos-notes"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div class="screen" id="screen-analytics">
+        <div class="content" style="max-width:100%">
+
+          <!-- ① SUMMARY BAR -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <div style="font-size:12px;color:var(--text3)" id="an-period-lbl">All trades · Mar 2026</div>
+            <button class="an-filter-btn" id="an-filter-btn" onclick="toggleFilterDrawer()">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1.5 3.5h10M3.5 6.5h6M5.5 9.5h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              Filters
+              <span class="an-filter-badge" id="an-filter-badge" style="display:none">1</span>
+            </button>
+          </div>
+          <div class="an-summary-bar" id="an-summary-bar"></div>
+
+          <!-- FILTER DRAWER (hidden off-canvas) -->
+          <div class="an-filter-overlay" id="an-filter-overlay" onclick="closeFilterDrawer()"></div>
+          <div class="an-filter-drawer" id="an-filter-drawer">
+            <div class="an-filter-drawer-header">
+              <span class="an-filter-drawer-title">Filters</span>
+              <button class="an-filter-close" onclick="closeFilterDrawer()">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+            <div class="an-filter-group">
+              <div class="an-filter-lbl">Side</div>
+              <select class="an-select an-select-full" id="an-filter-side" onchange="renderAnalytics()">
+                <option value="all">All sides</option>
+                <option value="long">Long only</option>
+                <option value="short">Short only</option>
+              </select>
+            </div>
+            <div class="an-filter-group">
+              <div class="an-filter-lbl">Result</div>
+              <select class="an-select an-select-full" id="an-filter-result" onchange="renderAnalytics()">
+                <option value="all">All results</option>
+                <option value="win">Wins only</option>
+                <option value="loss">Losses only</option>
+              </select>
+            </div>
+            <div class="an-filter-group">
+              <div class="an-filter-lbl">Symbol</div>
+              <select class="an-select an-select-full" id="an-filter-sym" onchange="renderAnalytics()">
+                <option value="all">All symbols</option>
+              </select>
+            </div>
+            <div class="an-filter-group">
+              <div class="an-filter-lbl">Session</div>
+              <select class="an-select an-select-full" id="an-filter-session" onchange="renderAnalytics()">
+                <option value="all">All sessions</option>
+                <option value="morning">Morning (9–11:30)</option>
+                <option value="midday">Midday (11:30–14)</option>
+                <option value="afternoon">Afternoon (14–16)</option>
+              </select>
+            </div>
+            <button class="an-reset-btn an-reset-full" onclick="resetAnFilters()">Reset all filters</button>
+          </div>
+
+          <!-- ② PERFORMANCE OVER TIME -->
+          <div class="an-section-title">Performance over time</div>
+          <div class="an-card an-card-full" style="margin-bottom:14px">
+            <div class="an-card-header">
+              <div class="an-card-title">Equity curve</div>
+              <div class="an-card-sub" id="an-equity-sub"></div>
+            </div>
+            <div style="position:relative;height:200px"><canvas id="chart-equity"></canvas></div>
+          </div>
+          <div class="an-grid-2" style="margin-bottom:14px">
+            <div class="an-card">
+              <div class="an-card-header"><div class="an-card-title">Daily P&amp;L</div><div class="an-card-sub" id="an-daily-sub"></div></div>
+              <div style="position:relative;height:160px"><canvas id="chart-daily"></canvas></div>
+            </div>
+            <div class="an-card">
+              <div class="an-card-header"><div class="an-card-title">Win rate over time</div><div class="an-card-sub">Rolling 5-trade</div></div>
+              <div style="position:relative;height:160px"><canvas id="chart-winrate"></canvas></div>
+            </div>
+          </div>
+
+          <!-- ③ WIN/LOSS QUALITY -->
+          <div class="an-section-title">Win / Loss quality</div>
+          <div class="an-grid-3" style="margin-bottom:14px">
+            <div class="an-card">
+              <div class="an-card-header"><div class="an-card-title">Trade P&amp;L distribution</div><div class="an-card-sub">Frequency by bucket</div></div>
+              <div style="position:relative;height:160px"><canvas id="chart-dist"></canvas></div>
+            </div>
+            <div class="an-card">
+              <div class="an-card-header"><div class="an-card-title">Win vs Loss size</div><div class="an-card-sub" id="an-wl-sub"></div></div>
+              <div style="position:relative;height:160px"><canvas id="chart-wl"></canvas></div>
+            </div>
+            <div class="an-card">
+              <div class="an-card-header"><div class="an-card-title">Consecutive streaks</div><div class="an-card-sub" id="an-streak-sub"></div></div>
+              <div id="an-streak-vis" style="padding-top:8px"></div>
+            </div>
+          </div>
+
+          <!-- ④ RISK -->
+          <div class="an-section-title">Risk</div>
+          <div class="an-risk-cards" id="an-risk-cards" style="margin-bottom:14px"></div>
+
+          <!-- ⑤ TIME-BASED -->
+          <div class="an-section-title">Time-based analysis</div>
+          <div class="an-grid-3" style="margin-bottom:14px">
+            <div class="an-card">
+              <div class="an-card-header"><div class="an-card-title">P&amp;L by weekday</div><div class="an-card-sub">Avg per day</div></div>
+              <div style="position:relative;height:160px"><canvas id="chart-weekday"></canvas></div>
+            </div>
+            <div class="an-card">
+              <div class="an-card-header"><div class="an-card-title">Best hours of day</div><div class="an-card-sub">Avg P&amp;L by entry hour</div></div>
+              <div style="position:relative;height:160px"><canvas id="chart-hour"></canvas></div>
+            </div>
+            <div class="an-card">
+              <div class="an-card-header"><div class="an-card-title">Session breakdown</div><div class="an-card-sub" id="an-session-sub"></div></div>
+              <div id="an-session-bars" style="padding-top:4px"></div>
+            </div>
+          </div>
+
+          <!-- ⑥ SYMBOL & LONG/SHORT -->
+          <div class="an-section-title">Symbol &amp; Direction</div>
+          <div class="an-grid-2" style="margin-bottom:14px">
+            <div class="an-card">
+              <div class="an-card-header"><div class="an-card-title">P&amp;L by symbol</div><div class="an-card-sub" id="an-sym-sub"></div></div>
+              <div style="position:relative;height:200px"><canvas id="chart-symbol"></canvas></div>
+            </div>
+            <div class="an-card">
+              <div class="an-card-header"><div class="an-card-title">Long vs Short</div><div class="an-card-sub" id="an-ls-sub"></div></div>
+              <div style="position:relative;height:200px"><canvas id="chart-ls"></canvas></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <!-- JOURNAL -->
+      <div class="screen" id="screen-journal">
+        <div class="jnl-layout">
+
+          <!-- LEFT: mini calendar + search -->
+          <div class="jnl-sidebar">
+            <div class="jnl-search-wrap">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.3"/><path d="M9 9l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              <input class="jnl-search-input" id="jnl-search" type="text" placeholder="Search notes…" oninput="renderJournal()">
+            </div>
+
+            <!-- Mini calendar nav -->
+            <div class="jnl-mini-cal">
+              <div class="jnl-cal-header">
+                <button class="jnl-cal-nav" onclick="jnlPrevMonth()">&#8592;</button>
+                <span class="jnl-cal-month" id="jnl-cal-month">March 2026</span>
+                <button class="jnl-cal-nav" onclick="jnlNextMonth()">&#8594;</button>
+              </div>
+              <div class="jnl-cal-dow">
+                <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+              </div>
+              <div class="jnl-cal-grid" id="jnl-cal-grid"></div>
+            </div>
+
+            <!-- Lessons learned -->
+            <div class="jnl-lessons">
+              <div class="jnl-lessons-title">Lessons learned</div>
+              <div class="jnl-lessons-list" id="jnl-lessons-list"></div>
+              <button class="jnl-add-lesson" onclick="addLesson()">+ Add lesson</button>
+            </div>
+          </div>
+
+          <!-- RIGHT: entries list -->
+          <div class="jnl-main">
+            <!-- Toolbar -->
+            <div class="jnl-toolbar">
+              <div class="jnl-count" id="jnl-count">14 entries</div>
+              <div style="display:flex;gap:8px;align-items:center;margin-left:auto">
+                <select class="an-select" id="jnl-filter-tag" onchange="renderJournal()">
+                  <option value="all">All tags</option>
+                  <option value="momentum">Momentum</option>
+                  <option value="trend">Trend</option>
+                  <option value="reversal">Reversal</option>
+                  <option value="chop">Chop</option>
+                  <option value="eod-fade">EOD fade</option>
+                  <option value="__hide__">Hide tags</option>
+                </select>
+                <select class="an-select" id="jnl-filter-mood" onchange="renderJournal()">
+                  <option value="all">All moods</option>
+                  <option value="5">Great (5)</option>
+                  <option value="4">Good (4)</option>
+                  <option value="3">Neutral (3)</option>
+                  <option value="2">Poor (2)</option>
+                  <option value="1">Bad (1)</option>
+                </select>
+                <button class="jnl-new-btn" onclick="newEntry()">+ New entry</button>
+              </div>
+            </div>
+
+            <!-- Entries -->
+            <div class="jnl-entries" id="jnl-entries"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="screen" id="screen-settings">
+        <div class="content-area" style="overflow-y:auto">
+        <div class="settings-page">
+
+          <!-- BROKER CONNECTION -->
+          <div class="settings-section">
+            <div class="settings-section-title">Broker connection</div>
+            <div class="settings-card">
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Interactive Brokers (IBKR)</div>
+                  <div class="settings-row-sub">Connected · syncing every 2 minutes · last sync 2 min ago</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div class="broker-status-row">
+                    <div class="broker-connected-dot"></div>
+                    <span class="broker-status-lbl">Connected</span>
+                  </div>
+                  <button class="settings-btn secondary" onclick="settingsDisconnect()">Disconnect</button>
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Sync frequency</div>
+                  <div class="settings-row-sub">How often open positions are refreshed from your broker</div>
+                </div>
+                <select class="settings-select" id="setting-sync-freq">
+                  <option value="1">Every 1 minute</option>
+                  <option value="2" selected>Every 2 minutes</option>
+                  <option value="5">Every 5 minutes</option>
+                  <option value="15">Every 15 minutes</option>
+                </select>
+              </div>
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Auto-import trades</div>
+                  <div class="settings-row-sub">Automatically pull closed trades from your broker into the journal</div>
+                </div>
+                <div class="toggle-wrap">
+                  <label class="toggle"><input type="checkbox" checked onchange="settingsSave()"><span class="toggle-slider"></span></label>
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Connect another broker</div>
+                  <div class="settings-row-sub">TD Ameritrade, Alpaca, and more coming soon</div>
+                </div>
+                <button class="settings-btn secondary" style="opacity:0.5;cursor:not-allowed">Coming soon</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACCOUNT & PROFILE -->
+          <div class="settings-section">
+            <div class="settings-section-title">Account &amp; profile</div>
+            <div class="settings-card">
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Profile photo</div>
+                  <div class="settings-row-sub">Click to upload a new photo</div>
+                </div>
+                <div class="avatar-lg" onclick="settingsUploadAvatar()" title="Upload photo">BL</div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Display name</div>
+                  <div class="settings-row-sub">Shown in the sidebar and on your journal</div>
+                </div>
+                <input class="settings-input" type="text" value="Brian Lin" id="setting-name" onblur="settingsSave()">
+              </div>
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Email address</div>
+                  <div class="settings-row-sub">Used for login and account recovery</div>
+                </div>
+                <input class="settings-input" type="email" value="brian@tradelog.io" id="setting-email" onblur="settingsSave()">
+              </div>
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Password</div>
+                  <div class="settings-row-sub">Last changed 30 days ago</div>
+                </div>
+                <button class="settings-btn secondary">Change password</button>
+              </div>
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Plan</div>
+                  <div class="settings-row-sub">Pro plan · renews Jan 1, 2027</div>
+                </div>
+                <button class="settings-btn secondary">Manage plan</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- DISPLAY PREFERENCES -->
+          <div class="settings-section">
+            <div class="settings-section-title">Display preferences</div>
+            <div class="settings-card">
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Timezone</div>
+                  <div class="settings-row-sub">Used for daily P&L aggregation and calendar display</div>
+                </div>
+                <select class="settings-select" id="setting-tz" onchange="settingsSave()">
+                  <option value="ET" selected>Eastern Time (ET)</option>
+                  <option value="CT">Central Time (CT)</option>
+                  <option value="MT">Mountain Time (MT)</option>
+                  <option value="PT">Pacific Time (PT)</option>
+                  <option value="UTC">UTC</option>
+                </select>
+              </div>
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Currency</div>
+                  <div class="settings-row-sub">All P&L values displayed in this currency</div>
+                </div>
+                <select class="settings-select" id="setting-currency" onchange="settingsSave()">
+                  <option value="USD" selected>USD — US Dollar</option>
+                  <option value="CAD">CAD — Canadian Dollar</option>
+                  <option value="GBP">GBP — British Pound</option>
+                  <option value="EUR">EUR — Euro</option>
+                </select>
+              </div>
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Date format</div>
+                  <div class="settings-row-sub">How dates are displayed across the app</div>
+                </div>
+                <select class="settings-select" id="setting-dateformat" onchange="settingsSave()">
+                  <option value="MMM D" selected>Mar 20</option>
+                  <option value="MM/DD">03/20</option>
+                  <option value="DD/MM">20/03</option>
+                  <option value="YYYY-MM-DD">2026-03-20</option>
+                </select>
+              </div>
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Show weekends on calendar</div>
+                  <div class="settings-row-sub">Display Saturday and Sunday columns</div>
+                </div>
+                <div class="toggle-wrap">
+                  <label class="toggle"><input type="checkbox" onchange="settingsSave()"><span class="toggle-slider"></span></label>
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Include fees in P&L</div>
+                  <div class="settings-row-sub">Subtract commissions and fees from all realized P&L calculations</div>
+                </div>
+                <div class="toggle-wrap">
+                  <label class="toggle"><input type="checkbox" checked onchange="settingsSave()"><span class="toggle-slider"></span></label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- NOTIFICATIONS -->
+          <div class="settings-section">
+            <div class="settings-section-title">Notifications</div>
+            <div class="settings-card">
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Daily summary email</div>
+                  <div class="settings-row-sub">Receive a P&L summary at end of each trading day</div>
+                </div>
+                <div class="toggle-wrap">
+                  <label class="toggle"><input type="checkbox" checked onchange="settingsSave()"><span class="toggle-slider"></span></label>
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Journal reminder</div>
+                  <div class="settings-row-sub">Remind me to write a journal entry after each trading session</div>
+                </div>
+                <div class="toggle-wrap">
+                  <label class="toggle"><input type="checkbox" checked onchange="settingsSave()"><span class="toggle-slider"></span></label>
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Drawdown alert</div>
+                  <div class="settings-row-sub">Notify me when daily drawdown exceeds a threshold</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <label class="toggle"><input type="checkbox" onchange="settingsSave()"><span class="toggle-slider"></span></label>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <span style="font-size:12px;color:var(--text3)">Alert at</span>
+                    <input class="settings-input" type="number" value="500" style="min-width:80px;width:80px" placeholder="500">
+                    <span style="font-size:12px;color:var(--text3)">loss</span>
+                  </div>
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Broker sync errors</div>
+                  <div class="settings-row-sub">Alert me if broker connection fails or data stops syncing</div>
+                </div>
+                <div class="toggle-wrap">
+                  <label class="toggle"><input type="checkbox" checked onchange="settingsSave()"><span class="toggle-slider"></span></label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DANGER ZONE -->
+          <div class="settings-section">
+            <div class="settings-section-title">Danger zone</div>
+            <div class="settings-card danger-card">
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Clear all trade data</div>
+                  <div class="settings-row-sub">Permanently delete all imported trades and journal entries. Cannot be undone.</div>
+                </div>
+                <button class="settings-btn danger" onclick="settingsClearData()">Clear data</button>
+              </div>
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Reset account</div>
+                  <div class="settings-row-sub">Remove all data, disconnect brokers, and start fresh.</div>
+                </div>
+                <button class="settings-btn danger" onclick="settingsResetAccount()">Reset account</button>
+              </div>
+              <div class="settings-row">
+                <div class="settings-row-label">
+                  <div class="settings-row-lbl">Delete account</div>
+                  <div class="settings-row-sub">Permanently delete your TradeLog account and all associated data.</div>
+                </div>
+                <button class="settings-btn danger" onclick="settingsDeleteAccount()">Delete account</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SAVE -->
+          <div style="display:flex;justify-content:flex-end;margin-top:4px">
+            <button class="settings-btn primary" onclick="settingsSaveAll()">Save changes</button>
+          </div>
+
+        </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/dashboard.js"></script>
+</body>
+</html>
