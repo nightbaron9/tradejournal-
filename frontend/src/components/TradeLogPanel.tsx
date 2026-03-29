@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { tradeRows, type TradeRow } from '../data/mockData'
+import type { TradeRow } from '../data/mockData'
+import { useTradesData } from '../hooks/useTradingData'
 import { SectionCard } from './SectionCard'
 
 type SortKey = 'symbol' | 'date' | 'entry' | 'exit' | 'quantity' | 'pnl'
@@ -60,6 +61,7 @@ function summaryValue(label: string, value: string, tone: 'positive' | 'negative
 }
 
 export function TradeLogPanel() {
+  const { data: tradeRows, loading } = useTradesData()
   const [search, setSearch] = useState('')
   const [side, setSide] = useState<'all' | 'Long' | 'Short'>('all')
   const [result, setResult] = useState<FilterResult>('all')
@@ -126,6 +128,7 @@ export function TradeLogPanel() {
         title="Trade log"
         description="Filter, sort, and review closed trades using the same interaction model as the prototype."
       >
+        {loading ? <div className="panel-empty-state">Loading trade log…</div> : null}
         <div className="trade-toolbar">
           <label className="trade-search">
             <span className="sr-only">Search symbol</span>

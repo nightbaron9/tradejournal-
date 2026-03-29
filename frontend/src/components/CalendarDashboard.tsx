@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { calendarRecords, dashboardSummary, type CalendarRecord } from '../data/mockData'
+import type { CalendarRecord } from '../data/mockData'
+import { useDashboardData } from '../hooks/useTradingData'
 
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const MONTH_LABELS = [
@@ -49,6 +50,9 @@ export function CalendarDashboard() {
   const initialMonth = new Date(2026, 2, 1)
   const [viewDate, setViewDate] = useState(initialMonth)
   const [selectedDate, setSelectedDate] = useState('2026-03-11')
+  const { data, loading } = useDashboardData()
+  const dashboardSummary = data.dashboardSummary
+  const calendarRecords = data.calendarRecords
 
   const calendarRecordMap = useMemo(
     () => new Map(calendarRecords.map((record) => [record.date, record])),
@@ -141,6 +145,12 @@ export function CalendarDashboard() {
         </div>
 
         <div className="metrics-grid">
+          {loading ? (
+            <article className="metric-card">
+              <span className="metric-label">Loading</span>
+              <strong className="metric-value neutral">Preparing dashboard…</strong>
+            </article>
+          ) : null}
           {dashboardSummary.map((metric) => (
             <article className="metric-card" key={metric.label}>
               <span className="metric-label">{metric.label}</span>

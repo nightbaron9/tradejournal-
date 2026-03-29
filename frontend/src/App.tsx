@@ -5,7 +5,7 @@ import { CalendarDashboard } from './components/CalendarDashboard'
 import { JournalPanel } from './components/JournalPanel'
 import { SettingsPanel } from './components/SettingsPanel'
 import { TradeLogPanel } from './components/TradeLogPanel'
-import { openPositions } from './data/mockData'
+import { usePositionsData } from './hooks/useTradingData'
 import { ResetPasswordPage } from './pages/ResetPasswordPage'
 import { SignInPage } from './pages/SignInPage'
 import { SignUpPage } from './pages/SignUpPage'
@@ -13,49 +13,53 @@ import './App.css'
 
 const TradesPage = () => <TradeLogPanel />
 
-const PositionsPage = () => (
-  <div className="screen-stack">
-    <section className="panel">
-      <div className="panel-heading">
-        <div>
-          <h2>Open positions</h2>
-          <p>Unrealized P/L remains visually distinct from calendar-based realized results.</p>
+const PositionsPage = () => {
+  const { data: positions, loading } = usePositionsData()
+
+  return (
+    <div className="screen-stack">
+      <section className="panel">
+        <div className="panel-heading">
+          <div>
+            <h2>Open positions</h2>
+            <p>Unrealized P/L remains visually distinct from calendar-based realized results.</p>
+          </div>
+          <span className="sync-pill">Last sync {loading ? 'loading...' : '2 min ago'}</span>
         </div>
-        <span className="sync-pill">Last sync 3 min ago</span>
-      </div>
-      <div className="position-grid">
-        {openPositions.map((position) => (
-          <article className="position-card" key={position.symbol}>
-            <div className="position-head">
-              <strong>{position.symbol}</strong>
-              <span>{position.side}</span>
-            </div>
-            <dl>
-              <div>
-                <dt>Qty</dt>
-                <dd>{position.quantity}</dd>
+        <div className="position-grid">
+          {positions.map((position) => (
+            <article className="position-card" key={position.symbol}>
+              <div className="position-head">
+                <strong>{position.symbol}</strong>
+                <span>{position.side}</span>
               </div>
-              <div>
-                <dt>Avg entry</dt>
-                <dd>{position.avgEntry}</dd>
-              </div>
-              <div>
-                <dt>Market value</dt>
-                <dd>{position.marketValue}</dd>
-              </div>
-              <div>
-                <dt>Unrealized P/L</dt>
-                <dd className={position.unrealized.startsWith('-') ? 'negative' : 'positive'}>
-                  {position.unrealized}
-                </dd>
-              </div>
-            </dl>
-          </article>
-        ))}
-      </div>
-    </section>
-  </div>
-)
+              <dl>
+                <div>
+                  <dt>Qty</dt>
+                  <dd>{position.quantity}</dd>
+                </div>
+                <div>
+                  <dt>Avg entry</dt>
+                  <dd>{position.avgEntry}</dd>
+                </div>
+                <div>
+                  <dt>Market value</dt>
+                  <dd>{position.marketValue}</dd>
+                </div>
+                <div>
+                  <dt>Unrealized P/L</dt>
+                  <dd className={position.unrealized.startsWith('-') ? 'negative' : 'positive'}>
+                    {position.unrealized}
+                  </dd>
+                </div>
+              </dl>
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
+  )
+}
 
 const JournalPage = () => <JournalPanel />
 

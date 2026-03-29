@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react'
-import { journalEntries as initialJournalEntries, type JournalEntry } from '../data/mockData'
+import { useEffect, useMemo, useState } from 'react'
+import type { JournalEntry } from '../data/mockData'
+import { useJournalEntries } from '../hooks/useTradingData'
 import { SectionCard } from './SectionCard'
 
 const MONTHS = [
@@ -36,12 +37,17 @@ type JournalCell = {
 }
 
 export function JournalPanel() {
-  const [entries, setEntries] = useState<JournalEntry[]>(initialJournalEntries)
+  const { data: initialEntries, loading } = useJournalEntries()
+  const [entries, setEntries] = useState<JournalEntry[]>(initialEntries)
   const [viewDate, setViewDate] = useState(new Date(2026, 2, 1))
   const [selectedDate, setSelectedDate] = useState('2026-03-11')
   const [search, setSearch] = useState('')
   const [tagFilter, setTagFilter] = useState('all')
   const [moodFilter, setMoodFilter] = useState('all')
+
+  useEffect(() => {
+    setEntries(initialEntries)
+  }, [initialEntries])
 
   const tags = useMemo(() => ['all', ...new Set(entries.flatMap((entry) => entry.tags))], [entries])
 
@@ -247,6 +253,7 @@ export function JournalPanel() {
           }
           className="journal-main-card"
         >
+          {loading ? <div className="auth-meta-text">Loading journal entries...</div> : null}
           <div className="journal-toolbar">
             <input
               className="journal-search-input"
