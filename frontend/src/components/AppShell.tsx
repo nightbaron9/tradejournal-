@@ -1,4 +1,5 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { useAppContext } from '../app/AppContext'
 
 const navItems = [
   { to: '/app/dashboard', label: 'Dashboard' },
@@ -20,6 +21,7 @@ const pageTitles: Record<string, string> = {
 
 export function AppShell() {
   const location = useLocation()
+  const { session, signOut } = useAppContext()
   const title = pageTitles[location.pathname] ?? 'Dashboard'
 
   return (
@@ -38,9 +40,7 @@ export function AppShell() {
             <NavLink
               key={item.to}
               to={item.to}
-              className={({ isActive }) =>
-                `sidebar-link${isActive ? ' active' : ''}`
-              }
+              className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
             >
               {item.label}
             </NavLink>
@@ -48,11 +48,21 @@ export function AppShell() {
         </nav>
 
         <div className="sidebar-footer">
-          <div className="user-avatar">BL</div>
-          <div>
-            <div className="user-name">Brian Lin</div>
-            <div className="user-plan">Prototype workspace</div>
+          <div className="user-avatar">
+            {(session.user?.name ?? 'BL')
+              .split(' ')
+              .map((part) => part[0])
+              .join('')
+              .slice(0, 2)
+              .toUpperCase()}
           </div>
+          <div>
+            <div className="user-name">{session.user?.name ?? 'Brian Lin'}</div>
+            <div className="user-plan">{session.user?.email ?? 'Prototype workspace'}</div>
+          </div>
+          <button className="sidebar-signout" type="button" onClick={() => void signOut()}>
+            Sign out
+          </button>
         </div>
       </aside>
 

@@ -1,4 +1,6 @@
+import type { ReactElement } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
+import { useAppContext } from './app/AppContext'
 import { AnalyticsPanel } from './components/AnalyticsPanel'
 import { AppShell } from './components/AppShell'
 import { CalendarDashboard } from './components/CalendarDashboard'
@@ -63,15 +65,72 @@ const PositionsPage = () => {
 
 const JournalPage = () => <JournalPanel />
 
+const LoadingScreen = () => (
+  <div className="screen-stack">
+    <section className="panel">
+      <p>Loading session...</p>
+    </section>
+  </div>
+)
+
+const ProtectedAppLayout = () => {
+  const { session, sessionLoading } = useAppContext()
+
+  if (sessionLoading) {
+    return <LoadingScreen />
+  }
+
+  if (!session.authenticated) {
+    return <Navigate to="/auth/sign-in" replace />
+  }
+
+  return <AppShell />
+}
+
+const PublicAuthRoute = ({ children }: { children: ReactElement }) => {
+  const { session, sessionLoading } = useAppContext()
+
+  if (sessionLoading) {
+    return <LoadingScreen />
+  }
+
+  if (session.authenticated) {
+    return <Navigate to="/app/dashboard" replace />
+  }
+
+  return children
+}
+
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/auth/sign-in" replace />} />
-      <Route path="/auth/sign-in" element={<SignInPage />} />
-      <Route path="/auth/sign-up" element={<SignUpPage />} />
-      <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
+      <Route
+        path="/auth/sign-in"
+        element={
+          <PublicAuthRoute>
+            <SignInPage />
+          </PublicAuthRoute>
+        }
+      />
+      <Route
+        path="/auth/sign-up"
+        element={
+          <PublicAuthRoute>
+            <SignUpPage />
+          </PublicAuthRoute>
+        }
+      />
+      <Route
+        path="/auth/reset-password"
+        element={
+          <PublicAuthRoute>
+            <ResetPasswordPage />
+          </PublicAuthRoute>
+        }
+      />
 
-      <Route path="/app" element={<AppShell />}>
+      <Route path="/app" element={<ProtectedAppLayout />}>
         <Route index element={<Navigate to="/app/dashboard" replace />} />
         <Route path="dashboard" element={<CalendarDashboard />} />
         <Route path="trades" element={<TradesPage />} />

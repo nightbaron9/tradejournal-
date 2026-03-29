@@ -1,6 +1,7 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type PropsWithChildren,
@@ -20,6 +21,7 @@ import type { AppConfig } from './config'
 type AppContextValue = {
   config: AppConfig
   session: SessionResponse
+  sessionLoading: boolean
   setSession: (session: SessionResponse) => void
   authService: ReturnType<typeof createAuthService>
   brokerService: ReturnType<typeof createBrokerService>
@@ -49,6 +51,30 @@ export function AppProvider({
     authenticated: false,
     user: null,
   })
+  const [sessionLoading, setSessionLoading] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+
+    void authService
+      .getSession()
+      .then((nextSession) => {
+        if (!cancelled) {
+          setSession(nextSession)
+          setSessionLoading(false)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setSession({ authenticated: false, user: null })
+          setSessionLoading(false)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [authService])
 
   async function signIn(request: SignInRequest) {
     const response = await authService.signIn(request)
@@ -79,6 +105,7 @@ export function AppProvider({
     () => ({
       config,
       session,
+      sessionLoading,
       setSession,
       authService,
       brokerService,
@@ -88,7 +115,7 @@ export function AppProvider({
       requestPasswordReset,
       signOut,
     }),
-    [authService, brokerService, config, session, tradingDataService],
+    [authService, brokerService, config, session, sessionLoading, tradingDataService],
   )
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
