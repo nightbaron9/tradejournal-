@@ -1,178 +1,137 @@
-import { useMemo, useState } from 'react'
-import {
-  brokerConnection,
-  brokerOptions,
-  currencyOptions,
-  dateFormatOptions,
-  settingsNotificationPreferences,
-  settingsProfile,
-  timezoneOptions,
-} from '../data/mockData'
+import { useState } from 'react'
+import { SettingsStatusChip } from './settings/SettingsStatusChip'
+import { useSettingsState, type SettingsState } from '../hooks/useSettingsState'
+import { brokerOptions, currencyOptions, dateFormatOptions, timezoneOptions } from '../data/mockData'
+import { brokerService } from '../services/brokerService'
+import type { SettingsPayload } from '../api/contracts'
 
-type SettingsState = {
-  broker: typeof brokerConnection
-  profile: typeof settingsProfile
-  preferences: {
-    timezone: string
-    currency: string
-    dateFormat: string
-    requireTags: boolean
-    showOpenPositionSummary: boolean
-  }
-  notifications: typeof settingsNotificationPreferences
-}
-
-function cloneInitialState(): SettingsState {
+function toSettingsPayload(settings: SettingsState): SettingsPayload {
   return {
-    broker: { ...brokerConnection },
-    profile: { ...settingsProfile },
-    preferences: {
-      timezone: settingsProfile.timezone,
-      currency: settingsProfile.currency,
-      dateFormat: settingsProfile.dateFormat,
-      requireTags: true,
-      showOpenPositionSummary: true,
+    profile: {
+      name: settings.profile.name,
+      email: settings.profile.email,
     },
-    notifications: { ...settingsNotificationPreferences },
+    preferences: {
+      timezone: settings.preferences.timezone,
+      currency: settings.preferences.currency,
+      dateFormat: settings.preferences.dateFormat,
+      requireTags: settings.preferences.requireTags,
+      showOpenPositionSummary: settings.preferences.showOpenPositionSummary,
+    },
+    notifications: {
+      journalReminder: settings.notifications.journalReminder,
+      weeklyReview: settings.notifications.weeklyReview,
+      brokerSyncErrors: settings.notifications.brokerSyncErrors,
+    },
   }
 }
 
 export function SettingsPanel() {
-  const [settings, setSettings] = useState<SettingsState>(cloneInitialState)
+  const {
+    brokerBadge,
+    settings,
+    setSettings,
+    updateBroker,
+    updateNotifications,
+    updatePreferences,
+    updateProfile,
+  } = useSettingsState()
+
   const [statusMessage, setStatusMessage] = useState('All changes saved')
   const [isSaving, setIsSaving] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
   const [isRefreshing, setIsRefreshing] = useState(false)
 
-  const brokerBadge = useMemo(
-    () =>
-      settings.broker.connected
-        ? `Connected · syncing every ${settings.broker.syncFrequency} · last sync ${settings.broker.lastSync}`
-        : 'Disconnected · live syncing is paused until a broker is connected',
-    [settings.broker.connected, settings.broker.lastSync, settings.broker.syncFrequency],
-  )
-
-  function queueAutosave(message = 'Changes saved') {
+  async function saveSettings(message = 'Changes saved') {
     setIsSaving(true)
     setStatusMessage('Saving changes...')
 
-    window.setTimeout(() => {
-      setIsSaving(false)
+    try {
+      await brokerService.updateSettings(toSettingsPayload(settings))
       setStatusMessage(message)
-    }, 500)
-  }
-
-  function updateBroker<K extends keyof SettingsState['broker']>(
-    key: K,
-    value: SettingsState['broker'][K],
-  ) {
-    setSettings((current: SettingsState) => ({
-      ...current,
-      broker: {
-        ...current.broker,
-        [key]: value,
-      },
-    }))
-    queueAutosave()
-  }
-
-  function updateProfile<K extends keyof SettingsState['profile']>(
-    key: K,
-    value: SettingsState['profile'][K],
-  ) {
-    setSettings((current: SettingsState) => ({
-      ...current,
-      profile: {
-        ...current.profile,
-        [key]: value,
-      },
-    }))
-    queueAutosave()
-  }
-
-  function updatePreferences<K extends keyof SettingsState['preferences']>(
-    key: K,
-    value: SettingsState['preferences'][K],
-  ) {
-    setSettings((current: SettingsState) => ({
-      ...current,
-      preferences: {
-        ...current.preferences,
-        [key]: value,
-      },
-    }))
-    queueAutosave()
-  }
-
-  function updateNotifications<K extends keyof SettingsState['notifications']>(
-    key: K,
-    value: SettingsState['notifications'][K],
-  ) {
-    setSettings((current: SettingsState) => ({
-      ...current,
-      notifications: {
-        ...current.notifications,
-        [key]: value,
-      },
-    }))
-    queueAutosave()
+    } catch (error) {
+      setStatusMessage(error instanceof Error ? error.message : 'Unable to save settings right now.')
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   async function handleBrokerConnect() {
     setIsConnecting(true)
     setStatusMessage('Starting broker connection...')
 
-    await new Promise((resolve) => window.setTimeout(resolve, 900))
-
-    setSettings((current: SettingsState) => ({
-      ...current,
-      broker: {
-        ...current.broker,
-        connected: true,
-        brokerName: 'Interactive Brokers',
-        statusLabel: 'Connected',
-        lastSync: 'Just now',
-      },
-    }))
-    setIsConnecting(false)
-    setStatusMessage('Broker connected')
+    try {
+      const nextBroker = settings.broker.brokerName || brokerOptions[0]
+      const response = await brokerService.connectBroker({ brokerName: nextBroker })
+      setSettings((current) => ({
+        ...current,
+        broker: {
+          ...current.broker,
+          connected: response.status.connected,
+          brokerName: response.status.brokerName,
+          statusLabel: response.status.statusLabel,
+          lastSync: response.status.lastSync,
+          syncFrequency: response.status.syncFrequency,
+          autoImportTrades: response.status.autoImportTrades,
+        },
+      }))
+      setStatusMessage('Broker connected')
+    } catch (error) {
+      setStatusMessage(error instanceof Error ? error.message : 'Unable to connect broker.')
+    } finally {
+      setIsConnecting(false)
+    }
   }
 
-  function handleBrokerDisconnect() {
+  async function handleBrokerDisconnect() {
     const shouldDisconnect = window.confirm(
       'Disconnect broker access? Open positions will remain visible from the last synced snapshot until the next connection.',
     )
 
     if (!shouldDisconnect) return
 
-    setSettings((current: SettingsState) => ({
-      ...current,
-      broker: {
-        ...current.broker,
-        connected: false,
-        lastSync: 'Sync paused',
-      },
-    }))
-    setStatusMessage('Broker disconnected')
+    setStatusMessage('Disconnecting broker...')
+
+    try {
+      const response = await brokerService.disconnectBroker()
+      setSettings((current) => ({
+        ...current,
+        broker: {
+          ...current.broker,
+          connected: response.status.connected,
+          statusLabel: response.status.statusLabel,
+          lastSync: response.status.lastSync,
+        },
+      }))
+      setStatusMessage('Broker disconnected')
+    } catch (error) {
+      setStatusMessage(error instanceof Error ? error.message : 'Unable to disconnect broker.')
+    }
   }
 
   async function handleRefresh() {
     setIsRefreshing(true)
     setStatusMessage('Refreshing broker sync...')
-    await new Promise((resolve) => window.setTimeout(resolve, 700))
-    setSettings((current: SettingsState) => ({
-      ...current,
-      broker: {
-        ...current.broker,
-        lastSync: 'Just now',
-      },
-    }))
-    setIsRefreshing(false)
-    setStatusMessage('Broker sync refreshed')
-  }
 
-  function handleSaveAll() {
-    queueAutosave('All settings saved')
+    try {
+      const response = await brokerService.refreshBroker()
+      setSettings((current) => ({
+        ...current,
+        broker: {
+          ...current.broker,
+          connected: response.status.connected,
+          statusLabel: response.status.statusLabel,
+          lastSync: response.status.lastSync,
+          syncFrequency: response.status.syncFrequency,
+          autoImportTrades: response.status.autoImportTrades,
+        },
+      }))
+      setStatusMessage('Broker sync refreshed')
+    } catch (error) {
+      setStatusMessage(error instanceof Error ? error.message : 'Unable to refresh broker sync.')
+    } finally {
+      setIsRefreshing(false)
+    }
   }
 
   function handleDangerAction(actionLabel: string) {
@@ -192,9 +151,7 @@ export function SettingsPanel() {
             <h2>Broker connection</h2>
             <p>Manage connection status, sync frequency, and auto-import settings.</p>
           </div>
-          <div className={`settings-status-chip ${isSaving ? 'is-saving' : ''}`}>
-            {statusMessage}
-          </div>
+          <SettingsStatusChip message={statusMessage} isSaving={isSaving} />
         </div>
 
         <div className="settings-grid">
@@ -206,7 +163,7 @@ export function SettingsPanel() {
               </div>
               <div className={`broker-pill ${settings.broker.connected ? 'connected' : ''}`}>
                 <span className="broker-dot" />
-                {settings.broker.connected ? 'Connected' : 'Disconnected'}
+                {settings.broker.statusLabel}
               </div>
             </div>
 
@@ -232,16 +189,29 @@ export function SettingsPanel() {
             <div className="settings-card-title">Sync preferences</div>
             <div className="settings-form-grid">
               <label className="settings-field">
-                <span>Sync frequency</span>
+                <span>Connected broker</span>
                 <select
-                  value={settings.broker.syncFrequency}
-                  onChange={(event) => updateBroker('syncFrequency', event.target.value)}
+                  value={settings.broker.brokerName}
+                  onChange={(event) => updateBroker('brokerName', event.target.value)}
                 >
                   {brokerOptions.map((option) => (
                     <option key={option} value={option}>
                       {option}
                     </option>
                   ))}
+                </select>
+              </label>
+
+              <label className="settings-field">
+                <span>Sync frequency</span>
+                <select
+                  value={settings.broker.syncFrequency}
+                  onChange={(event) => updateBroker('syncFrequency', event.target.value)}
+                >
+                  <option value="1 minute">1 minute</option>
+                  <option value="2 minutes">2 minutes</option>
+                  <option value="5 minutes">5 minutes</option>
+                  <option value="15 minutes">15 minutes</option>
                 </select>
               </label>
 
@@ -255,15 +225,13 @@ export function SettingsPanel() {
                 <input
                   type="checkbox"
                   checked={settings.broker.autoImportTrades}
-                  onChange={(event) =>
-                    updateBroker('autoImportTrades', event.target.checked)
-                  }
+                  onChange={(event) => updateBroker('autoImportTrades', event.target.checked)}
                 />
               </label>
 
               <div className="settings-inline-note">
-                Leave room in the account model for future multi-broker support, but keep MVP
-                broker selection to a single connected provider.
+                Leave room in the account model for future multi-broker support, but keep MVP broker
+                selection to a single connected provider.
               </div>
             </div>
           </article>
@@ -404,9 +372,20 @@ export function SettingsPanel() {
                 <input
                   type="checkbox"
                   checked={settings.notifications.journalReminder}
-                  onChange={(event) =>
-                    updateNotifications('journalReminder', event.target.checked)
-                  }
+                  onChange={(event) => updateNotifications('journalReminder', event.target.checked)}
+                />
+              </label>
+              <label className="settings-toggle-row">
+                <div>
+                  <div className="settings-toggle-title">Weekly review</div>
+                  <div className="settings-toggle-copy">
+                    Send a weekly recap reminder to review performance trends.
+                  </div>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={settings.notifications.weeklyReview}
+                  onChange={(event) => updateNotifications('weeklyReview', event.target.checked)}
                 />
               </label>
               <label className="settings-toggle-row">
@@ -419,9 +398,7 @@ export function SettingsPanel() {
                 <input
                   type="checkbox"
                   checked={settings.notifications.brokerSyncErrors}
-                  onChange={(event) =>
-                    updateNotifications('brokerSyncErrors', event.target.checked)
-                  }
+                  onChange={(event) => updateNotifications('brokerSyncErrors', event.target.checked)}
                 />
               </label>
             </div>
@@ -449,7 +426,13 @@ export function SettingsPanel() {
         </div>
 
         <div className="settings-footer-actions">
-          <button className="secondary-btn" type="button" onClick={handleSaveAll}>
+          <button
+            className="secondary-btn"
+            type="button"
+            onClick={() => {
+              void saveSettings('All settings saved')
+            }}
+          >
             {isSaving ? 'Saving...' : 'Save changes'}
           </button>
         </div>

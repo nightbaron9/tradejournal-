@@ -1,7 +1,9 @@
 import type { FormEvent } from 'react'
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { AuthAlert } from '../components/auth/AuthAlert'
 import { AuthLayout } from '../components/AuthLayout'
+import { signIn } from '../services/authService'
 import { isValidEmail } from '../utils/auth'
 
 export function SignInPage() {
@@ -38,17 +40,21 @@ export function SignInPage() {
     if (!valid) return
 
     setLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 800))
-    setLoading(false)
-
-    if (email === 'demo@tradelog.io' && password === 'Demo1234!pass') {
-      navigate('/app/dashboard')
+    try {
+      const response = await signIn({
+        email,
+        password,
+        rememberMe: remember,
+      })
+      navigate(response.redirectTo)
       return
+    } catch {
+      setAttempts((current) => current + 1)
+      setFormError('Invalid email or password.')
+      setPassword('')
+    } finally {
+      setLoading(false)
     }
-
-    setAttempts((current) => current + 1)
-    setFormError('Invalid email or password.')
-    setPassword('')
   }
 
   return (
@@ -92,7 +98,7 @@ export function SignInPage() {
           />
           {passwordError ? <span className="field-error">{passwordError}</span> : null}
         </label>
-        {formError ? <div className="auth-alert auth-alert-error">{formError}</div> : null}
+        {formError ? <AuthAlert tone="error">{formError}</AuthAlert> : null}
         {attempts > 0 ? (
           <div className="auth-meta-text">
             {remainingAttempts > 0

@@ -1,6 +1,8 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { AuthAlert } from '../components/auth/AuthAlert'
 import { AuthLayout } from '../components/AuthLayout'
+import { signUp } from '../services/authService'
 import { isValidEmail, passwordStrengthLabel, scorePassword } from '../utils/auth'
 
 export function SignUpPage() {
@@ -12,6 +14,7 @@ export function SignUpPage() {
   const [acceptedTerms, setAcceptedTerms] = useState(true)
   const [loading, setLoading] = useState(false)
   const [bannerError, setBannerError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
   const [fieldErrors, setFieldErrors] = useState({
     name: '',
     email: '',
@@ -56,8 +59,27 @@ export function SignUpPage() {
     }
 
     setLoading(true)
-    await new Promise((resolve) => window.setTimeout(resolve, 900))
-    navigate('/app/dashboard')
+    setSuccessMessage('')
+
+    try {
+      const response = await signUp({
+        name: name.trim(),
+        email,
+        password,
+        acceptedTerms,
+      })
+
+      setSuccessMessage(
+        response.verificationRequired
+          ? 'Account created. Verification is still mocked, but the flow is now routed through the auth service layer.'
+          : 'Account created successfully.',
+      )
+      navigate('/app/dashboard')
+    } catch (error) {
+      setBannerError(error instanceof Error ? error.message : 'Unable to create account.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -71,7 +93,8 @@ export function SignUpPage() {
       }
     >
       <form className="auth-form" onSubmit={handleSubmit}>
-        {bannerError ? <div className="auth-alert auth-alert-error">{bannerError}</div> : null}
+        {bannerError ? <AuthAlert tone="error">{bannerError}</AuthAlert> : null}
+        {successMessage ? <AuthAlert tone="success">{successMessage}</AuthAlert> : null}
 
         <label className="auth-field">
           <span>Full name</span>

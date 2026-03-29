@@ -36,6 +36,7 @@ export type BrokerSyncStatus = {
   lastSync: string
   syncFrequency: string
   autoImportTrades: boolean
+  statusLabel: string
 }
 
 export type BrokerConnectRequest = {
@@ -44,8 +45,42 @@ export type BrokerConnectRequest = {
 
 export type BrokerConnectResponse = {
   authorizationUrl: string
+  status: BrokerSyncStatus
 }
 
 export type BrokerRefreshResponse = {
   status: BrokerSyncStatus
 }
+
+export type BrokerDisconnectResponse = {
+  status: BrokerSyncStatus
+}
+
+export type SettingsPreferences = {
+  timezone: string
+  currency: string
+  dateFormat: string
+  requireTags: boolean
+  showOpenPositionSummary: boolean
+}
+
+export type NotificationPreferences = {
+  journalReminder: boolean
+  weeklyReview: boolean
+  brokerSyncErrors: boolean
+}
+
+export type SettingsPayload = {
+  profile: {
+    name: string
+    email: string
+  }
+  preferences: SettingsPreferences
+  notifications: NotificationPreferences
+}
+
+export type SettingsStatePayload = SettingsPayload & {
+  broker: BrokerSyncStatus
+}
+
+export type BrokerSyncUpdateRequest = Partial<SettingsStatePayload>

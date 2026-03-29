@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
+import { AuthAlert } from '../components/auth/AuthAlert'
 import { AuthLayout } from '../components/AuthLayout'
+import { requestPasswordReset } from '../services/authService'
 import { isValidEmail } from '../utils/auth'
 
 export function ResetPasswordPage() {
@@ -20,11 +22,16 @@ export function ResetPasswordPage() {
 
     setError('')
     setIsSubmitting(true)
-
-    window.setTimeout(() => {
-      setIsSubmitting(false)
-      setSuccess(true)
-    }, 800)
+    void requestPasswordReset({ email })
+      .then(() => {
+        setSuccess(true)
+      })
+      .catch(() => {
+        setError('Unable to submit reset request right now.')
+      })
+      .finally(() => {
+        setIsSubmitting(false)
+      })
   }
 
   return (
@@ -37,14 +44,14 @@ export function ResetPasswordPage() {
         </span>
       }
     >
-      <div className="auth-alert auth-alert-info">
+      <AuthAlert tone="info">
         Password reset stays generic for security; backend delivery is still mocked.
-      </div>
+      </AuthAlert>
 
       {success ? (
-        <div className="auth-alert auth-alert-success">
+        <AuthAlert tone="success">
           If that email is registered, a reset link has been sent.
-        </div>
+        </AuthAlert>
       ) : null}
 
       {error ? <div className="field-error visible">{error}</div> : null}
