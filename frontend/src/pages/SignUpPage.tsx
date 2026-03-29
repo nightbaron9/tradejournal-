@@ -1,12 +1,13 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useAppContext } from '../app/AppContext'
 import { AuthAlert } from '../components/auth/AuthAlert'
 import { AuthLayout } from '../components/AuthLayout'
-import { signUp } from '../services/authService'
 import { isValidEmail, passwordStrengthLabel, scorePassword } from '../utils/auth'
 
 export function SignUpPage() {
   const navigate = useNavigate()
+  const { signUp } = useAppContext()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -23,10 +24,7 @@ export function SignUpPage() {
   })
 
   const passwordScore = useMemo(() => scorePassword(password), [password])
-  const passwordStrength = useMemo(
-    () => passwordStrengthLabel(passwordScore),
-    [passwordScore],
-  )
+  const passwordStrength = useMemo(() => passwordStrengthLabel(passwordScore), [passwordScore])
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -34,10 +32,8 @@ export function SignUpPage() {
     const nextErrors = {
       name: name.trim() ? '' : 'Please enter your name.',
       email: isValidEmail(email) ? '' : 'Please enter a valid email.',
-      password:
-        password.length >= 12 ? '' : 'Password must be at least 12 characters.',
-      confirmPassword:
-        password === confirmPassword ? '' : 'Passwords do not match.',
+      password: password.length >= 12 ? '' : 'Password must be at least 12 characters.',
+      confirmPassword: password === confirmPassword ? '' : 'Passwords do not match.',
     }
 
     setFieldErrors(nextErrors)
@@ -122,9 +118,7 @@ export function SignUpPage() {
             }}
             className={fieldErrors.email ? 'auth-input-error' : ''}
           />
-          {fieldErrors.email ? (
-            <small className="auth-field-error">{fieldErrors.email}</small>
-          ) : null}
+          {fieldErrors.email ? <small className="auth-field-error">{fieldErrors.email}</small> : null}
         </label>
         <label className="auth-field">
           <span>Password</span>
@@ -143,9 +137,7 @@ export function SignUpPage() {
               Password strength: {passwordStrength}
             </small>
           ) : null}
-          {fieldErrors.password ? (
-            <small className="auth-field-error">{fieldErrors.password}</small>
-          ) : null}
+          {fieldErrors.password ? <small className="auth-field-error">{fieldErrors.password}</small> : null}
         </label>
         <label className="auth-field">
           <span>Confirm password</span>
@@ -159,9 +151,7 @@ export function SignUpPage() {
             }}
             className={fieldErrors.confirmPassword ? 'auth-input-error' : ''}
           />
-          {fieldErrors.confirmPassword ? (
-            <small className="auth-field-error">{fieldErrors.confirmPassword}</small>
-          ) : null}
+          {fieldErrors.confirmPassword ? <small className="auth-field-error">{fieldErrors.confirmPassword}</small> : null}
         </label>
         <label className="auth-checkbox auth-checkbox-block">
           <input

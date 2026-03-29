@@ -12,6 +12,7 @@ import {
   type Position,
   type TradeRow,
 } from '../data/mockData'
+import type { ApiClient } from '../api/client'
 
 export type TradingDataset = {
   dashboardSummary: MetricCard[]
@@ -22,45 +23,90 @@ export type TradingDataset = {
   analyticsTrades: AnalyticsTrade[]
 }
 
-const mockDataset: TradingDataset = {
-  dashboardSummary,
-  calendarRecords,
-  openPositions,
-  tradeRows,
-  journalEntries,
-  analyticsTrades,
+export type TradingDataService = {
+  getDataset(): Promise<TradingDataset>
+  getDashboardData(): Promise<{
+    dashboardSummary: MetricCard[]
+    calendarRecords: CalendarRecord[]
+  }>
+  getPositions(): Promise<Position[]>
+  getTrades(): Promise<TradeRow[]>
+  getJournalEntries(): Promise<JournalEntry[]>
+  getAnalyticsTrades(): Promise<AnalyticsTrade[]>
 }
 
-async function cloneDataset(): Promise<TradingDataset> {
-  await new Promise((resolve) => window.setTimeout(resolve, 150))
-  return structuredClone(mockDataset)
-}
+export function createTradingDataService(client: ApiClient): TradingDataService {
+  const mockDataset: TradingDataset = {
+    dashboardSummary,
+    calendarRecords,
+    openPositions,
+    tradeRows,
+    journalEntries,
+    analyticsTrades,
+  }
 
-export const tradingDataService = {
-  getDataset() {
-    return cloneDataset()
-  },
-  async getDashboardData() {
-    const dataset = await cloneDataset()
-    return {
-      dashboardSummary: dataset.dashboardSummary,
-      calendarRecords: dataset.calendarRecords,
-    }
-  },
-  async getPositions() {
-    const dataset = await cloneDataset()
-    return dataset.openPositions
-  },
-  async getTrades() {
-    const dataset = await cloneDataset()
-    return dataset.tradeRows
-  },
-  async getJournalEntries() {
-    const dataset = await cloneDataset()
-    return dataset.journalEntries
-  },
-  async getAnalyticsTrades() {
-    const dataset = await cloneDataset()
-    return dataset.analyticsTrades
-  },
+  async function cloneDataset(): Promise<TradingDataset> {
+    await new Promise((resolve) => window.setTimeout(resolve, 150))
+    return structuredClone(mockDataset)
+  }
+
+  const mockTradingDataService: TradingDataService = {
+    getDataset() {
+      return cloneDataset()
+    },
+    async getDashboardData() {
+      const dataset = await cloneDataset()
+      return {
+        dashboardSummary: dataset.dashboardSummary,
+        calendarRecords: dataset.calendarRecords,
+      }
+    },
+    async getPositions() {
+      const dataset = await cloneDataset()
+      return dataset.openPositions
+    },
+    async getTrades() {
+      const dataset = await cloneDataset()
+      return dataset.tradeRows
+    },
+    async getJournalEntries() {
+      const dataset = await cloneDataset()
+      return dataset.journalEntries
+    },
+    async getAnalyticsTrades() {
+      const dataset = await cloneDataset()
+      return dataset.analyticsTrades
+    },
+  }
+
+  const liveTradingDataService: TradingDataService = {
+    getDataset() {
+      return client.get<TradingDataset>('/trading/dataset')
+    },
+    async getDashboardData() {
+      const dataset = await client.get<TradingDataset>('/trading/dataset')
+      return {
+        dashboardSummary: dataset.dashboardSummary,
+        calendarRecords: dataset.calendarRecords,
+      }
+    },
+    async getPositions() {
+      const dataset = await client.get<TradingDataset>('/trading/dataset')
+      return dataset.openPositions
+    },
+    async getTrades() {
+      const dataset = await client.get<TradingDataset>('/trading/dataset')
+      return dataset.tradeRows
+    },
+    async getJournalEntries() {
+      const dataset = await client.get<TradingDataset>('/trading/dataset')
+      return dataset.journalEntries
+    },
+    async getAnalyticsTrades() {
+      const dataset = await client.get<TradingDataset>('/trading/dataset')
+      return dataset.analyticsTrades
+    },
+  }
+
+  return client.useMockData ? mockTradingDataService : liveTradingDataService
 }

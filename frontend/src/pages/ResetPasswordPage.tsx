@@ -1,11 +1,12 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
+import { useAppContext } from '../app/AppContext'
 import { AuthAlert } from '../components/auth/AuthAlert'
 import { AuthLayout } from '../components/AuthLayout'
-import { requestPasswordReset } from '../services/authService'
 import { isValidEmail } from '../utils/auth'
 
 export function ResetPasswordPage() {
+  const { requestPasswordReset } = useAppContext()
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)

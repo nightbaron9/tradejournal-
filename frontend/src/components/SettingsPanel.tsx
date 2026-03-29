@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { SettingsStatusChip } from './settings/SettingsStatusChip'
 import { useSettingsState, type SettingsState } from '../hooks/useSettingsState'
 import { brokerOptions, currencyOptions, dateFormatOptions, timezoneOptions } from '../data/mockData'
-import { brokerService } from '../services/brokerService'
+import { useAppContext } from '../app/AppContext'
 import type { SettingsPayload } from '../api/contracts'
 
 function toSettingsPayload(settings: SettingsState): SettingsPayload {
@@ -27,6 +27,7 @@ function toSettingsPayload(settings: SettingsState): SettingsPayload {
 }
 
 export function SettingsPanel() {
+  const { brokerService } = useAppContext()
   const {
     brokerBadge,
     settings,

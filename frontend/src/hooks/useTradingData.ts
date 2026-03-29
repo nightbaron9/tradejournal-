@@ -7,7 +7,7 @@ import type {
   Position,
   TradeRow,
 } from '../data/mockData'
-import { tradingDataService } from '../services/tradingDataService'
+import { useAppContext } from '../app/AppContext'
 
 type TradingDataState<T> = {
   data: T
@@ -21,6 +21,7 @@ function useAsyncData<T>(load: () => Promise<T>, initialData: T): TradingDataSta
   useEffect(() => {
     let cancelled = false
 
+    setLoading(true)
     void load().then((result) => {
       if (!cancelled) {
         setData(result)
@@ -37,6 +38,8 @@ function useAsyncData<T>(load: () => Promise<T>, initialData: T): TradingDataSta
 }
 
 export function useDashboardData() {
+  const { tradingDataService } = useAppContext()
+
   return useAsyncData<{ dashboardSummary: MetricCard[]; calendarRecords: CalendarRecord[] }>(
     () => tradingDataService.getDashboardData(),
     {
@@ -47,24 +50,25 @@ export function useDashboardData() {
 }
 
 export function usePositionsData() {
+  const { tradingDataService } = useAppContext()
   return useAsyncData<Position[]>(() => tradingDataService.getPositions(), [])
 }
 
 export function useTradesData() {
+  const { tradingDataService } = useAppContext()
   return useAsyncData<TradeRow[]>(() => tradingDataService.getTrades(), [])
 }
 
 export function useJournalEntries() {
+  const { tradingDataService } = useAppContext()
   return useAsyncData<JournalEntry[]>(() => tradingDataService.getJournalEntries(), [])
 }
 
 export function useAnalyticsTrades() {
+  const { tradingDataService } = useAppContext()
   return useAsyncData<AnalyticsTrade[]>(() => tradingDataService.getAnalyticsTrades(), [])
 }
 
 export function useTradeSymbols(trades: TradeRow[]) {
-  return useMemo(
-    () => Array.from(new Set(trades.map((trade) => trade.symbol))),
-    [trades],
-  )
+  return useMemo(() => Array.from(new Set(trades.map((trade) => trade.symbol))), [trades])
 }

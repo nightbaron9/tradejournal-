@@ -6,6 +6,7 @@ export type SignInRequest = {
 
 export type SignInResponse = {
   userId: string
+  user: SessionUser
   emailVerified: boolean
   redirectTo: string
 }
@@ -19,7 +20,9 @@ export type SignUpRequest = {
 
 export type SignUpResponse = {
   userId: string
+  user: SessionUser
   verificationRequired: boolean
+  redirectTo: string
 }
 
 export type ResetPasswordRequest = {
@@ -28,6 +31,21 @@ export type ResetPasswordRequest = {
 
 export type ResetPasswordResponse = {
   accepted: boolean
+}
+
+export type SessionUser = {
+  id: string
+  name: string
+  email: string
+}
+
+export type SessionResponse = {
+  authenticated: boolean
+  user: SessionUser | null
+}
+
+export type SignOutResponse = {
+  success: boolean
 }
 
 export type BrokerSyncStatus = {

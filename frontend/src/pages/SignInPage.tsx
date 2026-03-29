@@ -1,13 +1,14 @@
 import type { FormEvent } from 'react'
 import { useMemo, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { useAppContext } from '../app/AppContext'
 import { AuthAlert } from '../components/auth/AuthAlert'
 import { AuthLayout } from '../components/AuthLayout'
-import { signIn } from '../services/authService'
 import { isValidEmail } from '../utils/auth'
 
 export function SignInPage() {
   const navigate = useNavigate()
+  const { session, signIn } = useAppContext()
   const [email, setEmail] = useState('brian@tradelog.io')
   const [password, setPassword] = useState('hunter2hunter2')
   const [remember, setRemember] = useState(true)
@@ -18,6 +19,10 @@ export function SignInPage() {
   const [loading, setLoading] = useState(false)
 
   const remainingAttempts = useMemo(() => Math.max(0, 5 - attempts), [attempts])
+
+  if (session.authenticated) {
+    return <Navigate to="/app/dashboard" replace />
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -47,7 +52,6 @@ export function SignInPage() {
         rememberMe: remember,
       })
       navigate(response.redirectTo)
-      return
     } catch {
       setAttempts((current) => current + 1)
       setFormError('Invalid email or password.')
