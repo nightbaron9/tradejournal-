@@ -823,6 +823,252 @@ th {
   padding: 20px;
 }
 
+.section-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.04);
+  padding: 20px;
+  display: grid;
+  gap: 18px;
+}
+
+.section-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.section-card-heading {
+  display: grid;
+  gap: 4px;
+}
+
+.section-card-heading h2,
+.section-card-heading h3 {
+  margin: 0;
+  letter-spacing: -0.03em;
+}
+
+.section-card-heading p {
+  margin: 0;
+  color: #6b7280;
+}
+
+.trade-toolbar,
+.journal-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.trade-toolbar-left,
+.trade-toolbar-right,
+.journal-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  width: 220px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: #ffffff;
+  color: #111827;
+}
+
+.search-input:focus {
+  outline: 2px solid rgba(37, 99, 235, 0.15);
+  border-color: #2563eb;
+}
+
+.trade-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.trade-summary-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: #f9fafb;
+  display: grid;
+  gap: 6px;
+}
+
+.trade-summary-card strong {
+  font-size: 22px;
+}
+
+.table-sort {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.journal-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+  gap: 20px;
+}
+
+.journal-sidebar {
+  display: grid;
+  gap: 16px;
+}
+
+.journal-mini-calendar,
+.journal-lessons,
+.journal-entry-editor,
+.journal-entry-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #f9fafb;
+  padding: 16px;
+}
+
+.journal-mini-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.journal-mini-calendar-grid,
+.journal-mini-calendar-dow {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.journal-mini-calendar-dow span {
+  font-size: 11px;
+  color: #6b7280;
+  text-align: center;
+}
+
+.journal-mini-day {
+  min-height: 40px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #111827;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.journal-mini-day.selected {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.journal-mini-day.muted {
+  opacity: 0.45;
+}
+
+.journal-lessons-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.journal-lessons-list li {
+  color: #4b5563;
+}
+
+.journal-main {
+  display: grid;
+  gap: 16px;
+}
+
+.journal-entry-editor {
+  display: grid;
+  gap: 14px;
+}
+
+.journal-entry-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.journal-field {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  color: #374151;
+}
+
+.journal-field input,
+.journal-field textarea,
+.journal-field select {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: #ffffff;
+  color: #111827;
+}
+
+.journal-field textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.journal-field input:focus,
+.journal-field textarea:focus,
+.journal-field select:focus {
+  outline: 2px solid rgba(37, 99, 235, 0.15);
+  border-color: #2563eb;
+}
+
+.journal-entry-list {
+  display: grid;
+  gap: 12px;
+}
+
+.journal-entry-card {
+  display: grid;
+  gap: 10px;
+}
+
+.journal-entry-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.journal-entry-meta {
+  margin: 0;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.journal-entry-note {
+  margin: 0;
+  color: #111827;
+  line-height: 1.6;
+}
+
+.journal-entry-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
 .settings-stack {
   display: grid;
   gap: 20px;

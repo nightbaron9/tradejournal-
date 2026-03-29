@@ -2,55 +2,16 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { AnalyticsPanel } from './components/AnalyticsPanel'
 import { AppShell } from './components/AppShell'
 import { CalendarDashboard } from './components/CalendarDashboard'
+import { JournalPanel } from './components/JournalPanel'
 import { SettingsPanel } from './components/SettingsPanel'
-import { journalEntries, openPositions, tradeRows } from './data/mockData'
+import { TradeLogPanel } from './components/TradeLogPanel'
+import { openPositions } from './data/mockData'
 import { ResetPasswordPage } from './pages/ResetPasswordPage'
 import { SignInPage } from './pages/SignInPage'
 import { SignUpPage } from './pages/SignUpPage'
 import './App.css'
 
-const TradesPage = () => (
-  <div className="screen-stack">
-    <section className="panel">
-      <div className="panel-heading">
-        <div>
-          <h2>Trade log</h2>
-          <p>Mock data mirrors the prototype table and prepares this view for filtering.</p>
-        </div>
-      </div>
-      <div className="table-shell">
-        <table>
-          <thead>
-            <tr>
-              <th>Symbol</th>
-              <th>Date</th>
-              <th>Side</th>
-              <th>Entry</th>
-              <th>Exit</th>
-              <th>Qty</th>
-              <th>P/L</th>
-              <th>Setup</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tradeRows.map((trade) => (
-              <tr key={`${trade.symbol}-${trade.date}`}>
-                <td>{trade.symbol}</td>
-                <td>{trade.date}</td>
-                <td>{trade.side}</td>
-                <td>{trade.entry}</td>
-                <td>{trade.exit}</td>
-                <td>{trade.quantity}</td>
-                <td className={trade.pnl.startsWith('-') ? 'negative' : 'positive'}>{trade.pnl}</td>
-                <td>{trade.setup}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </div>
-)
+const TradesPage = () => <TradeLogPanel />
 
 const PositionsPage = () => (
   <div className="screen-stack">
@@ -96,32 +57,7 @@ const PositionsPage = () => (
   </div>
 )
 
-const JournalPage = () => (
-  <div className="screen-stack">
-    <section className="panel">
-      <div className="panel-heading">
-        <div>
-          <h2>Notes and journal</h2>
-          <p>The journal will stay connected to trading dates, notes, lessons, and mood.</p>
-        </div>
-      </div>
-      <div className="journal-list">
-        {journalEntries.map((entry) => (
-          <article className="journal-card" key={entry.date}>
-            <div className="journal-top">
-              <div>
-                <strong>{entry.date}</strong>
-                <p>{entry.lesson}</p>
-              </div>
-              <span className="tag">{entry.tag}</span>
-            </div>
-            <p>{entry.note}</p>
-          </article>
-        ))}
-      </div>
-    </section>
-  </div>
-)
+const JournalPage = () => <JournalPanel />
 
 function App() {
   return (

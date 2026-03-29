@@ -6,6 +6,7 @@ export type MetricCard = {
 }
 
 export type TradeRow = {
+  id: string
   symbol: string
   date: string
   side: 'Long' | 'Short'
@@ -14,6 +15,8 @@ export type TradeRow = {
   quantity: string
   pnl: string
   setup: string
+  session: 'Open' | 'Midday' | 'Close'
+  result: 'Win' | 'Loss'
 }
 
 export type Position = {
@@ -26,10 +29,13 @@ export type Position = {
 }
 
 export type JournalEntry = {
+  id: string
   date: string
-  tag: string
+  title: string
   lesson: string
   note: string
+  mood: 'Focused' | 'Calm' | 'Frustrated' | 'Confident' | 'Reactive'
+  tags: string[]
 }
 
 export type CalendarTrade = {
@@ -112,6 +118,7 @@ export const dashboardSummary: MetricCard[] = [
 
 export const tradeRows: TradeRow[] = [
   {
+    id: 'trade-001',
     symbol: 'NVDA',
     date: '2026-03-11',
     side: 'Long',
@@ -120,8 +127,11 @@ export const tradeRows: TradeRow[] = [
     quantity: '20',
     pnl: '+$899',
     setup: 'Opening range',
+    session: 'Open',
+    result: 'Win',
   },
   {
+    id: 'trade-002',
     symbol: 'TSLA',
     date: '2026-03-09',
     side: 'Short',
@@ -130,8 +140,11 @@ export const tradeRows: TradeRow[] = [
     quantity: '100',
     pnl: '-$880',
     setup: 'Failed breakdown',
+    session: 'Open',
+    result: 'Loss',
   },
   {
+    id: 'trade-003',
     symbol: 'AAPL',
     date: '2026-03-06',
     side: 'Long',
@@ -140,8 +153,11 @@ export const tradeRows: TradeRow[] = [
     quantity: '80',
     pnl: '+$280',
     setup: 'Trend continuation',
+    session: 'Open',
+    result: 'Win',
   },
   {
+    id: 'trade-004',
     symbol: 'SPY',
     date: '2026-03-04',
     side: 'Long',
@@ -150,6 +166,47 @@ export const tradeRows: TradeRow[] = [
     quantity: '25',
     pnl: '+$72',
     setup: 'VWAP reclaim',
+    session: 'Midday',
+    result: 'Win',
+  },
+  {
+    id: 'trade-005',
+    symbol: 'QQQ',
+    date: '2026-03-06',
+    side: 'Long',
+    entry: '$438.40',
+    exit: '$437.20',
+    quantity: '30',
+    pnl: '-$30',
+    setup: 'Pullback entry',
+    session: 'Close',
+    result: 'Loss',
+  },
+  {
+    id: 'trade-006',
+    symbol: 'AMD',
+    date: '2026-03-11',
+    side: 'Long',
+    entry: '$178.12',
+    exit: '$188.92',
+    quantity: '50',
+    pnl: '+$540',
+    setup: 'Trend continuation',
+    session: 'Open',
+    result: 'Win',
+  },
+  {
+    id: 'trade-007',
+    symbol: 'META',
+    date: '2026-03-09',
+    side: 'Short',
+    entry: '$498.15',
+    exit: '$503.15',
+    quantity: '50',
+    pnl: '-$250',
+    setup: 'Late fade',
+    session: 'Close',
+    result: 'Loss',
   },
 ]
 
@@ -190,22 +247,40 @@ export const openPositions: Position[] = [
 
 export const journalEntries: JournalEntry[] = [
   {
-    date: 'Mar 11, 2026',
-    tag: 'Momentum',
+    id: 'jnl-001',
+    date: '2026-03-11',
+    title: 'Momentum continuation review',
     lesson: 'The best day of the month came from waiting for clean continuation entries.',
     note: 'Stayed selective, kept size consistent, and avoided revenge trades after lunch.',
+    mood: 'Confident',
+    tags: ['Momentum', 'A+ day'],
   },
   {
-    date: 'Mar 09, 2026',
-    tag: 'Risk',
+    id: 'jnl-002',
+    date: '2026-03-09',
+    title: 'Risk review after failed shorts',
     lesson: 'Short entries without confirmation led to oversized losses.',
     note: 'Need a firmer rule for failed breakdowns and a hard stop after two red trades.',
+    mood: 'Frustrated',
+    tags: ['Risk', 'Shorts'],
   },
   {
-    date: 'Mar 06, 2026',
-    tag: 'Process',
+    id: 'jnl-003',
+    date: '2026-03-06',
+    title: 'Process notes on clean execution',
     lesson: 'Simple setups worked when I avoided overmanaging winners.',
     note: 'Calendar-linked notes should remain tied to the realized trade date for review.',
+    mood: 'Focused',
+    tags: ['Process', 'Review'],
+  },
+  {
+    id: 'jnl-004',
+    date: '2026-03-04',
+    title: 'Discipline over activity',
+    lesson: 'One clean trade was enough; not every session needs more action.',
+    note: 'Stayed patient after the first winner and protected mental capital.',
+    mood: 'Calm',
+    tags: ['Discipline'],
   },
 ]
 
